@@ -1,0 +1,9 @@
+{
+  "name": "backyard-eggs",
+  "version": "1.0.0",
+  "description": "Fresh backyard eggs website",
+  "private": true,
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}

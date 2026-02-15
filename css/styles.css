@@ -280,6 +280,78 @@ footer p {
     margin: 0.5rem 0;
 }
 
+/* Availability Banner */
+.availability-banner {
+    background: #28a745;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    margin: -2rem -2rem 2rem -2rem;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.availability-banner.limited {
+    background: #ffc107;
+    color: #212121;
+}
+
+.availability-banner.soldout {
+    background: #dc3545;
+    color: white;
+}
+
+.availability-banner h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: inherit;
+}
+
+.availability-banner p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.availability-banner .reserve-btn {
+    display: inline-block;
+    background: white;
+    color: #28a745;
+    padding: 0.75rem 1.5rem;
+    margin-top: 0.75rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.availability-banner.limited .reserve-btn {
+    color: #ffc107;
+}
+
+.availability-banner.soldout .reserve-btn {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+.availability-banner .reserve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.availability-banner.available {
+    animation: pulse 2s ease-in-out infinite;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .mobile-nav-toggle {

@@ -34,6 +34,13 @@
 
     <main>
         <div class="content-section">
+            <!-- Availability Banner -->
+            <div id="availabilityBanner" class="availability-banner" style="display: none;">
+                <h3 id="availabilityTitle">✅ Fresh Eggs Available Now!</h3>
+                <p id="availabilityMessage">Pick up your fresh eggs today</p>
+                <a href="reserve.html" class="reserve-btn" id="reserveBtn">Reserve Your Eggs</a>
+            </div>
+
             <h1>Fresh Backyard Eggs 🥚</h1>
 
             <div class="payment-box">
@@ -90,5 +97,55 @@
     </footer>
 
     <script src="js/scripts.js"></script>
+    <script>
+        // Load availability status
+        async function loadAvailability() {
+            try {
+                const response = await fetch('/data/batches.json?t=' + Date.now());
+                const data = await response.json();
+
+                if (data.availability) {
+                    const banner = document.getElementById('availabilityBanner');
+                    const title = document.getElementById('availabilityTitle');
+                    const message = document.getElementById('availabilityMessage');
+                    const btn = document.getElementById('reserveBtn');
+
+                    // Remove all status classes
+                    banner.classList.remove('available', 'limited', 'soldout');
+
+                    // Set status-specific content
+                    if (data.availability.status === 'available') {
+                        banner.classList.add('available');
+                        title.textContent = '✅ Fresh Eggs Available Now!';
+                        btn.textContent = 'Reserve Your Eggs';
+                        btn.href = 'reserve.html';
+                    } else if (data.availability.status === 'limited') {
+                        banner.classList.add('limited');
+                        title.textContent = '⚠️ Limited Supply Available';
+                        btn.textContent = 'Reserve Now';
+                        btn.href = 'reserve.html';
+                    } else if (data.availability.status === 'soldout') {
+                        banner.classList.add('soldout');
+                        title.textContent = '❌ Currently Sold Out';
+                        btn.textContent = 'Join Waitlist';
+                        btn.href = 'reserve.html';
+                    }
+
+                    // Set custom message if available
+                    if (data.availability.message) {
+                        message.textContent = data.availability.message;
+                    }
+
+                    // Show banner
+                    banner.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading availability:', error);
+            }
+        }
+
+        // Load availability when page loads
+        document.addEventListener('DOMContentLoaded', loadAvailability);
+    </script>
 </body>
 </html>

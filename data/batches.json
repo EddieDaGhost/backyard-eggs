@@ -1,0 +1,23 @@
+{
+  "batches": [
+    {
+      "id": 1,
+      "number": "01",
+      "startDate": "02/01/2026",
+      "endDate": "02/07/2026",
+      "active": true
+    },
+    {
+      "id": 2,
+      "number": "02",
+      "startDate": "02/08/2026",
+      "endDate": "02/14/2026",
+      "active": true
+    }
+  ],
+  "availability": {
+    "status": "available",
+    "message": "Fresh eggs available now!",
+    "lastUpdated": "2026-02-15"
+  }
+}
