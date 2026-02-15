@@ -356,6 +356,8 @@ footer p {
 @media (max-width: 768px) {
     .mobile-nav-toggle {
         display: block;
+        min-width: 44px;
+        min-height: 44px;
     }
 
     .nav-links {
@@ -368,14 +370,36 @@ footer p {
         flex-direction: column;
         padding: 1rem 2rem;
         gap: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .nav-links.active {
         display: flex;
     }
 
+    .nav-links a {
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
     h1 {
         font-size: 2rem;
+        line-height: 1.2;
     }
 
     h2 {
@@ -393,6 +417,52 @@ footer p {
     .chicken-grid {
         grid-template-columns: 1fr;
     }
+
+    .availability-banner {
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        padding: 1.5rem;
+    }
+
+    .availability-banner h3 {
+        font-size: 1.3rem;
+    }
+
+    .availability-banner .reserve-btn {
+        min-height: 44px;
+        padding: 1rem 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .payment-box {
+        padding: 1.25rem;
+    }
+
+    .batch-item {
+        padding: 1.25rem;
+        font-size: 1rem;
+    }
+
+    .fun-facts li {
+        padding: 1.25rem;
+        font-size: 1rem;
+    }
+
+    button[type="submit"] {
+        min-height: 44px;
+        padding: 1rem 2rem;
+        font-size: 1.05rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+        min-height: 44px;
+        padding: 1rem;
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -406,5 +476,22 @@ footer p {
 
     .content-section {
         padding: 1rem;
+    }
+
+    .availability-banner {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 1.25rem 1rem;
+    }
+
+    .availability-banner h3 {
+        font-size: 1.2rem;
+    }
+
+    .chicken-card {
+        padding: 1.25rem;
+    }
+
+    .chicken-card h3 {
+        font-size: 1.5rem;
     }
 }
