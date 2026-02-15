@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Reserve a batch of fresh backyard eggs. Easy online reservation form.">
+    <meta name="keywords" content="reserve eggs, order eggs, fresh eggs, backyard eggs">
+    <title>Reserve a Batch - Backyard Eggs</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="site-title">Backyard Eggs</a>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                ☰
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="meet-the-flockers.html">Meet The Flockers</a></li>
+                <li><a href="chicken-fax.html">Chicken Fax</a></li>
+                <li><a href="batches.html">Batches</a></li>
+                <li><a href="reserve.html" class="active">Reserve</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <h1>Reserve a Batch! 🥚</h1>
+            <p>Fill out the form below to reserve your fresh eggs. We'll get back to you as soon as possible!</p>
+
+            <!-- Netlify Form -->
+            <form name="egg-reservation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <!-- Hidden fields for Netlify -->
+                <input type="hidden" name="form-name" value="egg-reservation">
+
+                <!-- Honeypot field for spam prevention -->
+                <p style="display: none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field"></label>
+                </p>
+
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(773) 555-1234">
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Number of Cartons *</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="10" value="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="batch">Preferred Batch (optional)</label>
+                    <select id="batch" name="batch">
+                        <option value="">No preference</option>
+                        <option value="batch-01">Batch #01</option>
+                        <option value="batch-02">Batch #02</option>
+                        <option value="next-available">Next available</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup-date">Preferred Pickup Date</label>
+                    <input type="text" id="pickup-date" name="pickup-date" placeholder="e.g., This weekend, Tuesday, Next week">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Additional Notes or Questions</label>
+                    <textarea id="message" name="message" placeholder="Any special requests or questions?"></textarea>
+                </div>
+
+                <button type="submit">Submit Reservation</button>
+            </form>
+
+            <div class="payment-box" style="margin-top: 2rem;">
+                <h3>After Submitting</h3>
+                <p>Once we receive your reservation, we'll confirm availability and coordinate pickup details.</p>
+                <p><strong>Payment:</strong> You can pay at pickup using cash, Zelle (773) 672-9100, or Venmo (@Eddie_Correa95).</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
+        <p>Made with ❤️ for happy chickens and egg lovers</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html>
