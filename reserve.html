@@ -37,16 +37,10 @@
             <h1>Reserve a Batch! 🥚</h1>
             <p>Fill out the form below to reserve your fresh eggs. We'll get back to you as soon as possible!</p>
 
-            <!-- Netlify Form -->
-            <form name="egg-reservation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-                <!-- Hidden fields for Netlify -->
-                <input type="hidden" name="form-name" value="egg-reservation">
+            <!-- Reservation Form -->
+            <div id="formMessage" style="display: none; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;"></div>
 
-                <!-- Honeypot field for spam prevention -->
-                <p style="display: none;">
-                    <label>Don't fill this out if you're human: <input name="bot-field"></label>
-                </p>
-
+            <form id="reservationForm">
                 <div class="form-group">
                     <label for="name">Name *</label>
                     <input type="text" id="name" name="name" required>
@@ -78,8 +72,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="pickup-date">Preferred Pickup Date</label>
-                    <input type="text" id="pickup-date" name="pickup-date" placeholder="e.g., This weekend, Tuesday, Next week">
+                    <label for="pickupDate">Preferred Pickup Date</label>
+                    <input type="text" id="pickupDate" name="pickupDate" placeholder="e.g., This weekend, Tuesday, Next week">
                 </div>
 
                 <div class="form-group">
@@ -87,7 +81,7 @@
                     <textarea id="message" name="message" placeholder="Any special requests or questions?"></textarea>
                 </div>
 
-                <button type="submit">Submit Reservation</button>
+                <button type="submit" id="submitBtn">Submit Reservation</button>
             </form>
 
             <div class="payment-box" style="margin-top: 2rem;">
@@ -104,5 +98,73 @@
     </footer>
 
     <script src="js/scripts.js"></script>
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+            const originalText = submitBtn.textContent;
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            formMessage.style.display = 'none';
+
+            try {
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    quantity: document.getElementById('quantity').value,
+                    batch: document.getElementById('batch').value,
+                    pickupDate: document.getElementById('pickupDate').value,
+                    message: document.getElementById('message').value
+                };
+
+                const response = await fetch('/.netlify/functions/submit-reservation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success
+                    formMessage.style.display = 'block';
+                    formMessage.style.background = '#d4edda';
+                    formMessage.style.color = '#155724';
+                    formMessage.innerHTML = `
+                        <strong>✅ Reservation Submitted!</strong><br>
+                        Thank you, ${formData.name}! We've received your reservation for ${formData.quantity} carton(s).<br>
+                        We'll contact you at ${formData.email} to confirm availability and pickup details.
+                    `;
+
+                    // Reset form
+                    document.getElementById('reservationForm').reset();
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+
+                    // Scroll to message
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    throw new Error(result.error || 'Failed to submit');
+                }
+            } catch (error) {
+                formMessage.style.display = 'block';
+                formMessage.style.background = '#f8d7da';
+                formMessage.style.color = '#721c24';
+                formMessage.innerHTML = `
+                    <strong>❌ Submission Failed</strong><br>
+                    ${error.message}<br>
+                    Please try again or contact us directly.
+                `;
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { password, batches, content } = JSON.parse(event.body);
+    const { password, batches, content, reservations } = JSON.parse(event.body);
 
     // Verify password
     if (password !== process.env.ADMIN_PASSWORD) {
@@ -31,6 +31,11 @@ exports.handler = async (event, context) => {
     // Update content.json
     if (content) {
       await updateFile(githubToken, owner, repo, 'data/content.json', content);
+    }
+
+    // Update reservations.json
+    if (reservations) {
+      await updateFile(githubToken, owner, repo, 'data/reservations.json', reservations);
     }
 
     return {

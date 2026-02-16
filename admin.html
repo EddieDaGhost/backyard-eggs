@@ -302,6 +302,7 @@
             <button class="tab" data-tab="pricing">Pricing</button>
             <button class="tab" data-tab="chickens">Chickens</button>
             <button class="tab" data-tab="facts">Fun Facts</button>
+            <button class="tab" data-tab="reservations">Reservations</button>
         </div>
 
         <!-- Availability Tab -->
@@ -380,6 +381,18 @@
             </div>
         </div>
 
+        <!-- Reservations Tab -->
+        <div id="reservations-tab" class="tab-content">
+            <div class="section">
+                <h2>Egg Reservations</h2>
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #e7f3ff; border-radius: 6px;">
+                    <strong>📧 Email Notifications:</strong> To receive emails when new reservations come in, add your email to the <code>NOTIFICATION_EMAIL</code> environment variable in Netlify.
+                </div>
+                <div id="reservationStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></div>
+                <ul id="reservationList" style="list-style: none; padding: 0;"></ul>
+            </div>
+        </div>
+
         <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
             <button class="save-btn" onclick="saveAll()">💾 Save All Changes</button>
         </div>
@@ -391,6 +404,7 @@
         let adminPassword = '';
         let batchData = { batches: [], availability: {} };
         let contentData = {};
+        let reservationData = { reservations: [] };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', init);
@@ -490,6 +504,10 @@
                 const contentRes = await fetch('/data/content.json?t=' + Date.now());
                 contentData = await contentRes.json();
 
+                // Load reservations
+                const resRes = await fetch('/data/reservations.json?t=' + Date.now());
+                reservationData = await resRes.json();
+
                 renderAll();
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -502,6 +520,7 @@
             renderPricing();
             renderChickens();
             renderFacts();
+            renderReservations();
         }
 
         // Availability
@@ -641,6 +660,91 @@
             `).join('');
         }
 
+        // Reservations
+        function renderReservations() {
+            const list = document.getElementById('reservationList');
+            const stats = document.getElementById('reservationStats');
+
+            const pending = reservationData.reservations.filter(r => r.status === 'pending');
+            const confirmed = reservationData.reservations.filter(r => r.status === 'confirmed');
+            const completed = reservationData.reservations.filter(r => r.status === 'completed');
+
+            // Stats
+            stats.innerHTML = `
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700;">${pending.length}</div>
+                    <div style="font-size: 0.9rem;">Pending</div>
+                </div>
+                <div style="background: #d4edda; padding: 1rem; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700;">${confirmed.length}</div>
+                    <div style="font-size: 0.9rem;">Confirmed</div>
+                </div>
+                <div style="background: #e2e3e5; padding: 1rem; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700;">${completed.length}</div>
+                    <div style="font-size: 0.9rem;">Completed</div>
+                </div>
+            `;
+
+            // Reservations list
+            if (reservationData.reservations.length === 0) {
+                list.innerHTML = '<li style="text-align: center; padding: 2rem; color: #666;">No reservations yet.</li>';
+                return;
+            }
+
+            list.innerHTML = reservationData.reservations.map(r => {
+                const statusColors = {
+                    pending: { bg: '#fff3cd', border: '#ffc107', text: '#856404' },
+                    confirmed: { bg: '#d4edda', border: '#28a745', text: '#155724' },
+                    completed: { bg: '#e2e3e5', border: '#6c757d', text: '#383d41' }
+                };
+                const color = statusColors[r.status] || statusColors.pending;
+
+                return `
+                    <li style="background: ${color.bg}; border-left: 4px solid ${color.border}; padding: 1.5rem; margin-bottom: 1rem; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                                    <strong style="font-size: 1.1rem;">${r.name}</strong>
+                                    <span style="background: ${color.border}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+                                        ${r.status.toUpperCase()}
+                                    </span>
+                                </div>
+                                <div style="color: ${color.text}; line-height: 1.6;">
+                                    📧 ${r.email}<br>
+                                    📞 ${r.phone}<br>
+                                    🥚 ${r.quantity} carton(s) • Batch: ${r.batch}<br>
+                                    📅 Pickup: ${r.pickupDate}<br>
+                                    ${r.message ? `💬 ${r.message}<br>` : ''}
+                                    🕐 Submitted: ${r.submittedDate}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                ${r.status === 'pending' ? `<button onclick="updateReservationStatus(${r.id}, 'confirmed')" style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">✓ Confirm</button>` : ''}
+                                ${r.status === 'confirmed' ? `<button onclick="updateReservationStatus(${r.id}, 'completed')" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">✓ Complete</button>` : ''}
+                                <button onclick="deleteReservation(${r.id})" style="background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">🗑 Delete</button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        function updateReservationStatus(id, newStatus) {
+            const reservation = reservationData.reservations.find(r => r.id === id);
+            if (reservation) {
+                reservation.status = newStatus;
+                renderReservations();
+                // Auto-save is handled when user clicks main Save button
+            }
+        }
+
+        function deleteReservation(id) {
+            if (confirm('Delete this reservation?')) {
+                reservationData.reservations = reservationData.reservations.filter(r => r.id !== id);
+                renderReservations();
+            }
+        }
+
         // Save
         async function saveAll() {
             // Collect data
@@ -669,7 +773,8 @@
                     body: JSON.stringify({
                         password: adminPassword,
                         batches: batchData,
-                        content: contentData
+                        content: contentData,
+                        reservations: reservationData
                     })
                 });
 
