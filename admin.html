@@ -337,7 +337,7 @@
             <div class="section">
                 <h2>Manage Batches</h2>
                 <ul id="batchList" class="batch-list"></ul>
-                <button class="add-btn" onclick="addBatch()">+ Add New Batch</button>
+                <button class="add-btn" onclick="addBatch()">+ Start New Batch</button>
             </div>
         </div>
 
@@ -520,25 +520,90 @@
         // Batches
         function renderBatches() {
             const list = document.getElementById('batchList');
-            list.innerHTML = batchData.batches.map(b => `
-                <li class="item">
-                    <div><strong>Batch #${b.number}</strong><br><small>${b.startDate} - ${b.endDate}</small></div>
-                    <div class="item-actions">
-                        <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
-                    </div>
-                </li>
-            `).join('');
+
+            // Separate draft and published batches
+            const drafts = batchData.batches.filter(b => b.status === 'draft');
+            const published = batchData.batches.filter(b => b.status !== 'draft');
+
+            let html = '';
+
+            if (drafts.length > 0) {
+                html += '<h3 style="color: #ffc107; margin-top: 0;">📝 In Progress (Not visible on site)</h3>';
+                html += drafts.map(b => `
+                    <li class="item" style="border-left: 4px solid #ffc107;">
+                        <div>
+                            <strong>Batch #${b.number}</strong> <span style="background: #ffc107; color: #212121; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">DRAFT</span><br>
+                            <small>Started: ${b.startDate} • End date: <em>Not set</em></small>
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="completeBatch(${b.id})">Complete</button>
+                            <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            if (published.length > 0) {
+                html += '<h3 style="color: #28a745; margin-top: 2rem;">✅ Published (Visible on site)</h3>';
+                html += published.map(b => `
+                    <li class="item" style="border-left: 4px solid #28a745;">
+                        <div>
+                            <strong>Batch #${b.number}</strong> <span style="background: #28a745; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">LIVE</span><br>
+                            <small>${b.startDate} - ${b.endDate}</small>
+                        </div>
+                        <div class="item-actions">
+                            <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            if (drafts.length === 0 && published.length === 0) {
+                html = '<p style="text-align: center; color: #666; padding: 2rem;">No batches yet. Click "Start New Batch" to begin!</p>';
+            }
+
+            list.innerHTML = html;
         }
 
         function addBatch() {
             const num = prompt('Batch number:');
             const start = prompt('Start date (MM/DD/YYYY):');
-            const end = prompt('End date (MM/DD/YYYY):');
-            if (num && start && end) {
-                const id = batchData.batches.length ? Math.max(...batchData.batches.map(b => b.id)) + 1 : 1;
-                batchData.batches.push({ id, number: num, startDate: start, endDate: end, active: true });
-                renderBatches();
+
+            if (!num || !start) return;
+
+            const complete = confirm('Is this batch complete? Click OK if yes, Cancel to save as draft (in progress).');
+
+            let batch = {
+                id: batchData.batches.length ? Math.max(...batchData.batches.map(b => b.id)) + 1 : 1,
+                number: num,
+                startDate: start,
+                active: true
+            };
+
+            if (complete) {
+                const end = prompt('End date (MM/DD/YYYY):');
+                if (!end) return;
+                batch.endDate = end;
+                batch.status = 'published';
+            } else {
+                batch.endDate = '';
+                batch.status = 'draft';
             }
+
+            batchData.batches.push(batch);
+            renderBatches();
+        }
+
+        function completeBatch(id) {
+            const batch = batchData.batches.find(b => b.id === id);
+            if (!batch) return;
+
+            const end = prompt('Enter end date (MM/DD/YYYY) to publish this batch:', new Date().toLocaleDateString('en-US'));
+            if (!end) return;
+
+            batch.endDate = end;
+            batch.status = 'published';
+            renderBatches();
         }
 
         function deleteBatch(id) {

@@ -61,13 +61,18 @@
                 const container = document.getElementById('batchesContainer');
 
                 if (data.batches && data.batches.length > 0) {
-                    container.innerHTML = data.batches
-                        .filter(batch => batch.active)
-                        .map(batch => `
+                    // Only show published batches (not drafts)
+                    const publishedBatches = data.batches.filter(batch => batch.active && batch.status !== 'draft' && batch.endDate);
+
+                    if (publishedBatches.length > 0) {
+                        container.innerHTML = publishedBatches.map(batch => `
                             <div class="batch-item">
                                 <strong>#${batch.number}</strong> - Laid between <strong>${batch.startDate} - ${batch.endDate}</strong>
                             </div>
                         `).join('');
+                    } else {
+                        container.innerHTML = '<p style="text-align: center; color: #666;">No batches available at the moment. Check back soon!</p>';
+                    }
                 } else {
                     container.innerHTML = '<p style="text-align: center; color: #666;">No batches available at the moment. Check back soon!</p>';
                 }
