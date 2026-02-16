@@ -9,6 +9,19 @@
   to = "/admin.html"
   status = 200
 
+# Force HTTPS redirect
+[[redirects]]
+  from = "http://backyard-eggs.com/*"
+  to = "https://backyard-eggs.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.backyard-eggs.com/*"
+  to = "https://backyard-eggs.com/:splat"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/data/*"
   [headers.values]
