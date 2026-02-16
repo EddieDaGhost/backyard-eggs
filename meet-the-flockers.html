@@ -37,68 +37,10 @@
             <h1>Meet The Flockers 🐔</h1>
             <p>Get to know our wonderful backyard chickens! Each hen has her own personality and produces beautiful, fresh eggs.</p>
 
-            <div class="chicken-grid">
-                <!-- Beyoncé -->
+            <div class="chicken-grid" id="chickenGrid">
+                <!-- Chickens loaded from content.json -->
                 <div class="chicken-card">
-                    <h3>Beyoncé</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Black Ameraucana</p>
-                    <p><strong>Personality:</strong> Queen of the pecking order! Beyoncé is gentle with humans but commands respect within the flock.</p>
-                    <p><strong>Egg Production:</strong> 4-6 medium/large blue or green eggs weekly</p>
-                </div>
-
-                <!-- Ke$ha -->
-                <div class="chicken-card">
-                    <h3>Ke$ha</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Speckled Sussex</p>
-                    <p><strong>Personality:</strong> An excellent forager who loves free-range time. She's a calm and beautiful breed with stunning speckled feathers.</p>
-                    <p><strong>Egg Production:</strong> 4-6 large light brown eggs per week</p>
-                </div>
-
-                <!-- Cookie -->
-                <div class="chicken-card">
-                    <h3>Cookie</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Mystery breed with feathery feet</p>
-                    <p><strong>Personality:</strong> Our surprise addition! Cookie came as a complimentary chick with the original order.</p>
-                    <p><strong>Egg Production:</strong> Produces the smallest (and cutest!) eggs in the flock</p>
-                </div>
-
-                <!-- RiRi -->
-                <div class="chicken-card">
-                    <h3>RiRi</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Rhode Island Red</p>
-                    <p><strong>Personality:</strong> Calm and friendly, representing Rhode Island's state bird!</p>
-                    <p><strong>Egg Production:</strong> Around 4-6 large brown eggs per week</p>
-                </div>
-
-                <!-- Honey -->
-                <div class="chicken-card">
-                    <h3>Honey</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Rhode Island Red</p>
-                    <p><strong>Personality:</strong> A heavy-breed hen who's calm and dependable.</p>
-                    <p><strong>Egg Production:</strong> Around 4-6 large brown eggs per week</p>
-                </div>
-
-                <!-- Sunny -->
-                <div class="chicken-card">
-                    <h3>Sunny</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #f4a460 0%, #daa520 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Buff Orpington</p>
-                    <p><strong>Personality:</strong> Known for her friendly nature and cuddly appearance!</p>
-                    <p><strong>Egg Production:</strong> 4-6 large brown eggs per week</p>
-                </div>
-
-                <!-- Sugar -->
-                <div class="chicken-card">
-                    <h3>Sugar</h3>
-                    <div class="chicken-image-placeholder" style="background: linear-gradient(135deg, #f4a460 0%, #daa520 100%); height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>
-                    <p><strong>Breed:</strong> Buff Orpington</p>
-                    <p><strong>Personality:</strong> Sweet and friendly, loves human interaction!</p>
-                    <p><strong>Egg Production:</strong> 4-6 large brown eggs per week</p>
+                    <p>Loading chickens...</p>
                 </div>
             </div>
         </div>
@@ -110,5 +52,61 @@
     </footer>
 
     <script src="js/scripts.js"></script>
+    <script>
+        // Load chickens from content.json
+        async function loadChickens() {
+            try {
+                const response = await fetch('/data/content.json?t=' + Date.now());
+                const data = await response.json();
+
+                if (data.chickens && data.chickens.length > 0) {
+                    const chickenGrid = document.getElementById('chickenGrid');
+                    chickenGrid.innerHTML = '';
+
+                    // Color gradients for each chicken (fallback if image not available)
+                    const gradients = {
+                        'beyonce': 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+                        'kesha': 'linear-gradient(135deg, #8b4513 0%, #a0522d 100%)',
+                        'cookie': 'linear-gradient(135deg, #d4a574 0%, #c19a6b 100%)',
+                        'riri': 'linear-gradient(135deg, #8b0000 0%, #a52a2a 100%)',
+                        'honey': 'linear-gradient(135deg, #8b0000 0%, #a52a2a 100%)',
+                        'sunny': 'linear-gradient(135deg, #f4a460 0%, #daa520 100%)',
+                        'sugar': 'linear-gradient(135deg, #f4a460 0%, #daa520 100%)'
+                    };
+
+                    data.chickens.forEach(chicken => {
+                        const card = document.createElement('div');
+                        card.className = 'chicken-card';
+
+                        const gradient = gradients[chicken.id] || 'linear-gradient(135deg, #666 0%, #888 100%)';
+
+                        // Create image placeholder (can be replaced with actual images later)
+                        const imagePlaceholder = `
+                            <div class="chicken-image-placeholder"
+                                 style="background: ${gradient}; height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                                🐔
+                            </div>
+                        `;
+
+                        card.innerHTML = `
+                            <h3>${chicken.name}</h3>
+                            ${imagePlaceholder}
+                            <p><strong>Breed:</strong> ${chicken.breed}</p>
+                            <p><strong>Personality:</strong> ${chicken.personality}</p>
+                            <p><strong>Egg Production:</strong> ${chicken.eggProduction}</p>
+                        `;
+
+                        chickenGrid.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading chickens:', error);
+                document.getElementById('chickenGrid').innerHTML = '<div class="chicken-card"><p>Error loading chickens. Please try again later.</p></div>';
+            }
+        }
+
+        // Load chickens when page loads
+        document.addEventListener('DOMContentLoaded', loadChickens);
+    </script>
 </body>
 </html>

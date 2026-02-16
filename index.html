@@ -43,13 +43,13 @@
 
             <h1>Fresh Backyard Eggs 🥚</h1>
 
-            <div class="payment-box">
+            <div class="payment-box" id="pricingBox">
                 <h3>Pricing & Payment</h3>
-                <p><strong>Suggested Donation:</strong> $4 per carton</p>
-                <p>Pay what you can! All proceeds go toward chicken care and feeding.</p>
+                <p><strong>Suggested Donation:</strong> <span id="pricingAmount">$4 per carton</span></p>
+                <p id="pricingDescription">Pay what you can! All proceeds go toward chicken care and feeding.</p>
 
                 <p><strong>Payment Methods:</strong></p>
-                <ul>
+                <ul id="paymentMethodsList">
                     <li>Cash</li>
                     <li>Zelle: <strong>(773) 672-9100</strong></li>
                     <li>Venmo: <strong>@Eddie_Correa95</strong></li>
@@ -98,6 +98,35 @@
 
     <script src="js/scripts.js"></script>
     <script>
+        // Load pricing from content.json
+        async function loadPricing() {
+            try {
+                const response = await fetch('/data/content.json?t=' + Date.now());
+                const data = await response.json();
+
+                if (data.pricing) {
+                    document.getElementById('pricingAmount').textContent = data.pricing.amount;
+                    document.getElementById('pricingDescription').textContent = data.pricing.description;
+
+                    // Build payment methods list
+                    const methodsList = document.getElementById('paymentMethodsList');
+                    methodsList.innerHTML = '';
+
+                    if (data.pricing.paymentMethods.cash) {
+                        methodsList.innerHTML += '<li>Cash</li>';
+                    }
+                    if (data.pricing.paymentMethods.zelle) {
+                        methodsList.innerHTML += `<li>Zelle: <strong>${data.pricing.paymentMethods.zelle}</strong></li>`;
+                    }
+                    if (data.pricing.paymentMethods.venmo) {
+                        methodsList.innerHTML += `<li>Venmo: <strong>${data.pricing.paymentMethods.venmo}</strong></li>`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading pricing:', error);
+            }
+        }
+
         // Load availability status
         async function loadAvailability() {
             try {
@@ -144,8 +173,11 @@
             }
         }
 
-        // Load availability when page loads
-        document.addEventListener('DOMContentLoaded', loadAvailability);
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPricing();
+            loadAvailability();
+        });
     </script>
 </body>
 </html>

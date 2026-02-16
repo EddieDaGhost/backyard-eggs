@@ -37,46 +37,9 @@
             <h1>🐓 Egg & Chicken Fun Facts!</h1>
             <p>Discover fascinating facts about our feathered friends and the amazing eggs they produce!</p>
 
-            <ul class="fun-facts">
-                <li>
-                    <strong>Impressive Egg Production:</strong> Hens produce approximately 250-300 eggs per year, depending on the breed. That's almost one egg per day!
-                </li>
-
-                <li>
-                    <strong>World's Heaviest Egg:</strong> An ostrich laid the world's heaviest egg at over 2.5 lbs - that's equivalent to about 24 chicken eggs!
-                </li>
-
-                <li>
-                    <strong>Shell Color Myth:</strong> Egg shell color is breed-dependent and has no impact on nutritional value. Brown eggs and white eggs are equally nutritious!
-                </li>
-
-                <li>
-                    <strong>Freshness Float Test:</strong> Water flotation indicates egg age. Fresh eggs sink while older ones float due to the air cell inside expanding over time.
-                </li>
-
-                <li>
-                    <strong>Thick Whites Mean Fresh:</strong> Egg white thickness correlates with freshness. Fresh eggs have thick, firm whites, while older eggs have thinner, more watery whites.
-                </li>
-
-                <li>
-                    <strong>Impressive Memory:</strong> Chickens can recognize up to 100 faces, including humans! They remember who treats them well.
-                </li>
-
-                <li>
-                    <strong>Chickens Dream:</strong> Chickens experience REM sleep and can dream, just like humans do. Wonder what they dream about?
-                </li>
-
-                <li>
-                    <strong>Diet Affects Yolk Color:</strong> Diet quality affects yolk color and richness. Chickens with access to diverse greens and insects produce deeper orange yolks.
-                </li>
-
-                <li>
-                    <strong>Record-Breaking Hen:</strong> One hen holds the record for laying 371 eggs in a single year. Talk about dedication!
-                </li>
-
-                <li>
-                    <strong>T-Rex Connection:</strong> Genetic research reveals chickens share closer DNA with Tyrannosaurus rex than modern reptiles do. Your backyard dinosaurs!
-                </li>
+            <ul class="fun-facts" id="funFactsList">
+                <!-- Fun facts loaded from content.json -->
+                <li>Loading fun facts...</li>
             </ul>
         </div>
     </main>
@@ -87,5 +50,31 @@
     </footer>
 
     <script src="js/scripts.js"></script>
+    <script>
+        // Load fun facts from content.json
+        async function loadFunFacts() {
+            try {
+                const response = await fetch('/data/content.json?t=' + Date.now());
+                const data = await response.json();
+
+                if (data.funFacts && data.funFacts.length > 0) {
+                    const factsList = document.getElementById('funFactsList');
+                    factsList.innerHTML = '';
+
+                    data.funFacts.forEach(fact => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${fact.title}:</strong> ${fact.content}`;
+                        factsList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading fun facts:', error);
+                document.getElementById('funFactsList').innerHTML = '<li>Error loading fun facts. Please try again later.</li>';
+            }
+        }
+
+        // Load fun facts when page loads
+        document.addEventListener('DOMContentLoaded', loadFunFacts);
+    </script>
 </body>
 </html>
