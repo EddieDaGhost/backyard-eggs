@@ -81,8 +81,8 @@ exports.handler = async (event, context) => {
       throw new Error(`GitHub API error: ${error.message}`);
     }
 
-    // Optional: Send email notification (requires email service setup)
-    // You can add email service integration here (SendGrid, Mailgun, etc.)
+    // Send Discord notification
+    await sendDiscordNotification(reservation);
 
     return {
       statusCode: 200,
@@ -105,3 +105,77 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
+async function sendDiscordNotification(reservation) {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+  if (!webhookUrl) {
+    console.log('Discord webhook URL not configured, skipping notification');
+    return;
+  }
+
+  try {
+    const embed = {
+      title: '🥚 New Egg Reservation!',
+      color: 0xF4A460, // Orange/gold color
+      fields: [
+        {
+          name: '👤 Customer',
+          value: reservation.name,
+          inline: true
+        },
+        {
+          name: '📧 Email',
+          value: reservation.email,
+          inline: true
+        },
+        {
+          name: '📞 Phone',
+          value: reservation.phone,
+          inline: true
+        },
+        {
+          name: '🥚 Quantity',
+          value: `${reservation.quantity} carton(s)`,
+          inline: true
+        },
+        {
+          name: '📦 Batch',
+          value: reservation.batch,
+          inline: true
+        },
+        {
+          name: '📅 Pickup Date',
+          value: reservation.pickupDate,
+          inline: true
+        }
+      ],
+      timestamp: reservation.submittedAt,
+      footer: {
+        text: 'Backyard Eggs - Reservation System'
+      }
+    };
+
+    // Add message field if there's a message
+    if (reservation.message) {
+      embed.fields.push({
+        name: '💬 Message',
+        value: reservation.message,
+        inline: false
+      });
+    }
+
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        embeds: [embed]
+      })
+    });
+  } catch (error) {
+    console.error('Failed to send Discord notification:', error);
+    // Don't throw error - we don't want to fail the reservation if Discord is down
+  }
+}
