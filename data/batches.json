@@ -18,8 +18,8 @@
     }
   ],
   "availability": {
-    "status": "available",
+    "status": "limited",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-02-15"
+    "lastUpdated": "2026-02-16"
   }
 }
