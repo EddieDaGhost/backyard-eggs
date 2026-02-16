@@ -1,19 +1,6 @@
 {
   "reservations": [
     {
-      "id": 1771213932432,
-      "name": "Test Name",
-      "email": "TestEmail@test.com",
-      "phone": "test number",
-      "quantity": "3",
-      "batch": "next-available",
-      "pickupDate": "no preference",
-      "message": "no notes ",
-      "status": "pending",
-      "submittedAt": "2026-02-16T03:52:12.432Z",
-      "submittedDate": "2/16/2026"
-    },
-    {
       "id": 1771205011831,
       "name": "Test Name",
       "email": "TestEmail@test.com",
