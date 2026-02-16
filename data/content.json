@@ -1,0 +1,125 @@
+{
+  "siteInfo": {
+    "title": "Backyard Eggs",
+    "tagline": "Fresh from Our Flock to Your Table"
+  },
+  "pricing": {
+    "amount": "$4 per carton",
+    "description": "Pay what you can! All proceeds go toward chicken care and feeding.",
+    "paymentMethods": {
+      "cash": true,
+      "zelle": "(773) 672-9100",
+      "venmo": "@Eddie_Correa95"
+    }
+  },
+  "chickens": [
+    {
+      "id": "beyonce",
+      "name": "Beyoncé",
+      "breed": "Black Ameraucana",
+      "personality": "Queen of the pecking order! Beyoncé is gentle with humans but commands respect within the flock.",
+      "eggProduction": "4-6 medium/large blue or green eggs weekly",
+      "image": "beyonce.jpg"
+    },
+    {
+      "id": "kesha",
+      "name": "Ke$ha",
+      "breed": "Speckled Sussex",
+      "personality": "An excellent forager who loves free-range time. She's a calm and beautiful breed with stunning speckled feathers.",
+      "eggProduction": "4-6 large light brown eggs per week",
+      "image": "kesha.jpg"
+    },
+    {
+      "id": "cookie",
+      "name": "Cookie",
+      "breed": "Mystery breed with feathery feet",
+      "personality": "Our surprise addition! Cookie came as a complimentary chick with the original order.",
+      "eggProduction": "Produces the smallest (and cutest!) eggs in the flock",
+      "image": "cookie.jpg"
+    },
+    {
+      "id": "riri",
+      "name": "RiRi",
+      "breed": "Rhode Island Red",
+      "personality": "Calm and friendly, representing Rhode Island's state bird!",
+      "eggProduction": "Around 4-6 large brown eggs per week",
+      "image": "riri.jpg"
+    },
+    {
+      "id": "honey",
+      "name": "Honey",
+      "breed": "Rhode Island Red",
+      "personality": "A heavy-breed hen who's calm and dependable.",
+      "eggProduction": "Around 4-6 large brown eggs per week",
+      "image": "honey.jpg"
+    },
+    {
+      "id": "sunny",
+      "name": "Sunny",
+      "breed": "Buff Orpington",
+      "personality": "Known for her friendly nature and cuddly appearance!",
+      "eggProduction": "4-6 large brown eggs per week",
+      "image": "sunny.jpg"
+    },
+    {
+      "id": "sugar",
+      "name": "Sugar",
+      "breed": "Buff Orpington",
+      "personality": "Sweet and friendly, loves human interaction!",
+      "eggProduction": "4-6 large brown eggs per week",
+      "image": "sugar.jpg"
+    }
+  ],
+  "funFacts": [
+    {
+      "id": 1,
+      "title": "Impressive Egg Production",
+      "content": "Hens produce approximately 250-300 eggs per year, depending on the breed. That's almost one egg per day!"
+    },
+    {
+      "id": 2,
+      "title": "World's Heaviest Egg",
+      "content": "An ostrich laid the world's heaviest egg at over 2.5 lbs - that's equivalent to about 24 chicken eggs!"
+    },
+    {
+      "id": 3,
+      "title": "Shell Color Myth",
+      "content": "Egg shell color is breed-dependent and has no impact on nutritional value. Brown eggs and white eggs are equally nutritious!"
+    },
+    {
+      "id": 4,
+      "title": "Freshness Float Test",
+      "content": "Water flotation indicates egg age. Fresh eggs sink while older ones float due to the air cell inside expanding over time."
+    },
+    {
+      "id": 5,
+      "title": "Thick Whites Mean Fresh",
+      "content": "Egg white thickness correlates with freshness. Fresh eggs have thick, firm whites, while older eggs have thinner, more watery whites."
+    },
+    {
+      "id": 6,
+      "title": "Impressive Memory",
+      "content": "Chickens can recognize up to 100 faces, including humans! They remember who treats them well."
+    },
+    {
+      "id": 7,
+      "title": "Chickens Dream",
+      "content": "Chickens experience REM sleep and can dream, just like humans do. Wonder what they dream about?"
+    },
+    {
+      "id": 8,
+      "title": "Diet Affects Yolk Color",
+      "content": "Diet quality affects yolk color and richness. Chickens with access to diverse greens and insects produce deeper orange yolks."
+    },
+    {
+      "id": 9,
+      "title": "Record-Breaking Hen",
+      "content": "One hen holds the record for laying 371 eggs in a single year. Talk about dedication!"
+    },
+    {
+      "id": 10,
+      "title": "T-Rex Connection",
+      "content": "Genetic research reveals chickens share closer DNA with Tyrannosaurus rex than modern reptiles do. Your backyard dinosaurs!"
+    }
+  ]
+}

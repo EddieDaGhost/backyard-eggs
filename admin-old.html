@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard - Backyard Eggs</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .batch-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .batch-item-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        .batch-actions button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-edit {
+            background: #6E7B49;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-add {
+            background: #6E7B49;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        .availability-status {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-btn.active {
+            border-color: #6E7B49;
+            background: #f0f4e8;
+        }
+
+        .status-btn.available.active {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .status-btn.limited.active {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .status-btn.soldout.active {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+        }
+
+        .message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <h1 style="text-align: center; color: #6E7B49;">🔐 Admin Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autofocus>
+            </div>
+            <button type="submit" class="btn-add" style="width: 100%;">Login</button>
+        </form>
+        <div id="loginError" class="message error hidden"></div>
+    </div>
+
+    <!-- Admin Dashboard (Hidden until logged in) -->
+    <div id="adminDashboard" class="hidden">
+        <header>
+            <nav>
+                <a href="index.html" class="site-title">Backyard Eggs Admin</a>
+                <button onclick="logout()" style="background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">Logout</button>
+            </nav>
+        </header>
+
+        <div class="admin-container">
+            <div id="message" class="message hidden"></div>
+
+            <!-- Availability Status -->
+            <div class="admin-section">
+                <h2>Eggs Availability Status</h2>
+                <div class="availability-status">
+                    <button class="status-btn available" data-status="available">
+                        <strong>✅ Available Now</strong><br>
+                        <small>Eggs in stock</small>
+                    </button>
+                    <button class="status-btn limited" data-status="limited">
+                        <strong>⚠️ Limited Supply</strong><br>
+                        <small>Few eggs left</small>
+                    </button>
+                    <button class="status-btn soldout" data-status="soldout">
+                        <strong>❌ Sold Out</strong><br>
+                        <small>No eggs available</small>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="availabilityMessage">Custom Message (optional)</label>
+                    <input type="text" id="availabilityMessage" placeholder="e.g., Fresh eggs available this weekend!">
+                </div>
+            </div>
+
+            <!-- Batch Management -->
+            <div class="admin-section">
+                <h2>Manage Batches</h2>
+                <ul id="batchList" class="batch-list"></ul>
+                <button onclick="addBatch()" class="btn-add">➕ Add New Batch</button>
+            </div>
+
+            <!-- Save Button -->
+            <button onclick="saveChanges()" class="save-btn">💾 Save All Changes</button>
+        </div>
+    </div>
+
+    <!-- Modal for editing batches -->
+    <div id="batchModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modalTitle">Edit Batch</h2>
+            <form id="batchForm">
+                <div class="form-group">
+                    <label for="batchNumber">Batch Number</label>
+                    <input type="text" id="batchNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="batchStartDate">Start Date (MM/DD/YYYY)</label>
+                    <input type="text" id="batchStartDate" placeholder="02/01/2026" required>
+                </div>
+                <div class="form-group">
+                    <label for="batchEndDate">End Date (MM/DD/YYYY)</label>
+                    <input type="text" id="batchEndDate" placeholder="02/07/2026" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="closeModal()" style="background: #6c757d; color: white;">Cancel</button>
+                    <button type="submit" style="background: #6E7B49; color: white;">Save Batch</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/scripts.js"></script>
+    <script>
+        let batchData = { batches: [], availability: {} };
+        let currentEditId = null;
+        const ADMIN_SESSION_KEY = 'admin_session';
+
+        // Check if already logged in
+        if (sessionStorage.getItem(ADMIN_SESSION_KEY)) {
+            showDashboard();
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+
+            if (!password || password.trim() === '') {
+                showLoginError('Please enter a password');
+                return;
+            }
+
+            // Store password and show dashboard
+            // Password will be validated when saving changes
+            sessionStorage.setItem(ADMIN_SESSION_KEY, password);
+            showDashboard();
+        });
+
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            loadBatchData();
+        }
+
+        function logout() {
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            location.reload();
+        }
+
+        async function loadBatchData() {
+            try {
+                const response = await fetch('/data/batches.json?t=' + Date.now());
+                batchData = await response.json();
+                renderBatches();
+                setAvailabilityStatus(batchData.availability.status);
+                document.getElementById('availabilityMessage').value = batchData.availability.message || '';
+            } catch (error) {
+                showMessage('Failed to load batch data', 'error');
+            }
+        }
+
+        function renderBatches() {
+            const list = document.getElementById('batchList');
+            list.innerHTML = '';
+
+            if (batchData.batches.length === 0) {
+                list.innerHTML = '<li style="padding: 1rem; text-align: center; color: #666;">No batches yet. Click "Add New Batch" to create one.</li>';
+                return;
+            }
+
+            batchData.batches.forEach(batch => {
+                const li = document.createElement('li');
+                li.className = 'batch-item-admin';
+                li.innerHTML = `
+                    <div>
+                        <strong>Batch #${batch.number}</strong><br>
+                        <small>${batch.startDate} - ${batch.endDate}</small>
+                    </div>
+                    <div class="batch-actions">
+                        <button class="btn-edit" onclick="editBatch(${batch.id})">Edit</button>
+                        <button class="btn-delete" onclick="deleteBatch(${batch.id})">Delete</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function setAvailabilityStatus(status) {
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.status === status) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Availability button clicks
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setAvailabilityStatus(btn.dataset.status);
+            });
+        });
+
+        function addBatch() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Batch';
+            document.getElementById('batchNumber').value = '';
+            document.getElementById('batchStartDate').value = '';
+            document.getElementById('batchEndDate').value = '';
+            document.getElementById('batchModal').classList.remove('hidden');
+        }
+
+        function editBatch(id) {
+            const batch = batchData.batches.find(b => b.id === id);
+            if (!batch) return;
+
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Batch';
+            document.getElementById('batchNumber').value = batch.number;
+            document.getElementById('batchStartDate').value = batch.startDate;
+            document.getElementById('batchEndDate').value = batch.endDate;
+            document.getElementById('batchModal').classList.remove('hidden');
+        }
+
+        function deleteBatch(id) {
+            if (confirm('Are you sure you want to delete this batch?')) {
+                batchData.batches = batchData.batches.filter(b => b.id !== id);
+                renderBatches();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('batchModal').classList.add('hidden');
+        }
+
+        document.getElementById('batchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const batchNumber = document.getElementById('batchNumber').value;
+            const startDate = document.getElementById('batchStartDate').value;
+            const endDate = document.getElementById('batchEndDate').value;
+
+            if (currentEditId) {
+                // Edit existing batch
+                const batch = batchData.batches.find(b => b.id === currentEditId);
+                if (batch) {
+                    batch.number = batchNumber;
+                    batch.startDate = startDate;
+                    batch.endDate = endDate;
+                }
+            } else {
+                // Add new batch
+                const newId = batchData.batches.length > 0
+                    ? Math.max(...batchData.batches.map(b => b.id)) + 1
+                    : 1;
+
+                batchData.batches.push({
+                    id: newId,
+                    number: batchNumber,
+                    startDate: startDate,
+                    endDate: endDate,
+                    active: true
+                });
+            }
+
+            renderBatches();
+            closeModal();
+        });
+
+        async function saveChanges() {
+            const password = sessionStorage.getItem(ADMIN_SESSION_KEY);
+            if (!password) {
+                showMessage('Session expired. Please log in again.', 'error');
+                logout();
+                return;
+            }
+
+            // Get availability status
+            const activeStatusBtn = document.querySelector('.status-btn.active');
+            const status = activeStatusBtn ? activeStatusBtn.dataset.status : 'available';
+            const message = document.getElementById('availabilityMessage').value ||
+                (status === 'available' ? 'Fresh eggs available now!' :
+                 status === 'limited' ? 'Limited eggs available' :
+                 'Currently sold out');
+
+            batchData.availability = {
+                status: status,
+                message: message,
+                lastUpdated: new Date().toISOString().split('T')[0]
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/update-batches', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        password: password,
+                        batches: batchData.batches,
+                        availability: batchData.availability
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(result.message, 'success');
+                } else {
+                    showMessage(result.error || 'Failed to save changes', 'error');
+                    if (response.status === 401) {
+                        setTimeout(logout, 2000);
+                    }
+                }
+            } catch (error) {
+                showMessage('Network error. Please check your connection.', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = `message ${type}`;
+            msgDiv.classList.remove('hidden');
+
+            setTimeout(() => {
+                msgDiv.classList.add('hidden');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
