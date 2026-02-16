@@ -1,6 +1,8 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  # Skip builds when only data files change (saves build minutes)
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)data/'"
 
 [[redirects]]
   from = "/admin"
@@ -11,4 +13,5 @@
   for = "/data/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Cache-Control = "public, max-age=60"
+    # Cache data files for 5 minutes (reduces bandwidth usage)
+    Cache-Control = "public, max-age=300, stale-while-revalidate=60"
