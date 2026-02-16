@@ -291,19 +291,19 @@
         }
 
         // Login form handler
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const password = document.getElementById('password').value;
 
-            try {
-                const response = await fetch('/data/batches.json');
-                if (response.ok) {
-                    sessionStorage.setItem(ADMIN_SESSION_KEY, password);
-                    showDashboard();
-                }
-            } catch (error) {
-                showLoginError('Failed to connect. Please try again.');
+            if (!password || password.trim() === '') {
+                showLoginError('Please enter a password');
+                return;
             }
+
+            // Store password and show dashboard
+            // Password will be validated when saving changes
+            sessionStorage.setItem(ADMIN_SESSION_KEY, password);
+            showDashboard();
         });
 
         function showLoginError(message) {
