@@ -14,7 +14,7 @@
   },
   "chickens": [
     {
-      "id": "beyonce",
+      "id": "beyonc",
       "name": "Beyoncé",
       "breed": "Black Ameraucana",
       "personality": "Queen of the pecking order! Beyoncé is gentle with humans but commands respect within the flock.",
@@ -22,7 +22,7 @@
       "image": "beyonce.jpg"
     },
     {
-      "id": "kesha",
+      "id": "keha",
       "name": "Ke$ha",
       "breed": "Speckled Sussex",
       "personality": "An excellent forager who loves free-range time. She's a calm and beautiful breed with stunning speckled feathers.",
