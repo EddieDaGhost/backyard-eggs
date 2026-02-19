@@ -32,6 +32,14 @@
         </nav>
     </header>
 
+    <section class="hero-section">
+        <div class="hero-inner">
+            <div class="hero-egg">🥚</div>
+            <h1>Fresh from Our Flock,<br>Straight to Your Table</h1>
+            <p>Happy, healthy backyard hens. Pay what you can — every carton goes right back to the girls.</p>
+        </div>
+    </section>
+
     <main>
         <div class="content-section">
             <!-- Availability Banner -->
@@ -40,8 +48,6 @@
                 <p id="availabilityMessage"></p>
                 <a href="reserve.html" class="reserve-btn" id="reserveBtn" style="visibility: hidden;">Reserve Your Eggs</a>
             </div>
-
-            <h1>Fresh Backyard Eggs 🥚</h1>
 
             <div class="payment-box" id="pricingBox">
                 <h3>Pricing & Payment</h3>
@@ -54,36 +60,53 @@
 
             <h2>Egg Care & Handling</h2>
 
-            <h3>Storage Recommendations</h3>
-            <p>Fresh eggs can be stored in two ways:</p>
-            <ul>
-                <li><strong>Refrigerated:</strong> Store eggs in the refrigerator for maximum shelf life (up to 4-5 weeks)</li>
-                <li><strong>Room Temperature:</strong> Unwashed eggs with intact bloom can be kept at room temperature for 2-3 weeks</li>
-            </ul>
+            <div class="care-grid">
+                <div class="care-card">
+                    <div class="care-icon">🧺</div>
+                    <h3>Storage</h3>
+                    <div class="storage-options">
+                        <div class="storage-option">
+                            <span>❄️ Refrigerated</span>
+                            <p>Up to <strong>4–5 weeks.</strong> Best for washed eggs.</p>
+                        </div>
+                        <div class="storage-option">
+                            <span>🌡️ Room Temperature</span>
+                            <p>Up to <strong>2–3 weeks</strong> — unwashed, bloom intact.</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3>Freshness Test</h3>
-            <p><strong>Water Displacement Test:</strong> Fill a bowl with water and gently place an egg in it.</p>
-            <ul>
-                <li><strong>Sinks and lays flat:</strong> Very fresh (0-2 weeks old)</li>
-                <li><strong>Sinks but stands upright:</strong> Still good (2-3 weeks old)</li>
-                <li><strong>Floats:</strong> Past prime - best not to eat</li>
-            </ul>
+                <div class="care-card">
+                    <div class="care-icon">🥣</div>
+                    <h3>Float Test</h3>
+                    <p style="font-size: 0.9rem; color: #555; margin-bottom: 0.75rem;">Place egg in a bowl of water:</p>
+                    <ul class="freshness-list">
+                        <li><span class="badge badge--fresh">Sinks flat</span> Very fresh (0–2 wks)</li>
+                        <li><span class="badge badge--ok">Stands upright</span> Still good (2–3 wks)</li>
+                        <li><span class="badge badge--old">Floats</span> Past prime — discard</li>
+                    </ul>
+                </div>
 
-            <h3>Cleaning Protocol</h3>
-            <p>If you need to clean your eggs:</p>
-            <ul>
-                <li>Use warm water (warmer than the egg to prevent bacteria from being drawn inside)</li>
-                <li>Gently wipe with a cloth or soft brush</li>
-                <li>Avoid removing the natural "bloom" coating when possible - it helps preserve freshness</li>
-                <li>Refrigerate eggs after washing</li>
-            </ul>
+                <div class="care-card">
+                    <div class="care-icon">🫧</div>
+                    <h3>Cleaning</h3>
+                    <ul>
+                        <li>Use <strong>warm water</strong> (warmer than the egg) to stop bacteria being drawn inside</li>
+                        <li>Wipe gently with a soft cloth or brush</li>
+                        <li>Preserve the natural <strong>bloom</strong> when possible — it extends freshness</li>
+                        <li><strong>Refrigerate immediately</strong> after washing</li>
+                    </ul>
+                </div>
 
-            <h3>Food Safety</h3>
-            <p><strong>Important:</strong> Cook eggs to a safe internal temperature:</p>
-            <ul>
-                <li>Scrambled eggs, fried eggs, and omelets should reach 160°F (71°C)</li>
-                <li>Hard-boiled eggs should be cooked until both white and yolk are firm</li>
-            </ul>
+                <div class="care-card">
+                    <div class="care-icon">🍳</div>
+                    <h3>Food Safety</h3>
+                    <ul>
+                        <li><strong>Scrambled, fried, omelets</strong><br>Cook to <strong>160°F (71°C)</strong></li>
+                        <li><strong>Hard-boiled</strong><br>Cook until whites and yolk are fully firm</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </main>
 
