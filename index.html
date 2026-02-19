@@ -35,10 +35,10 @@
     <main>
         <div class="content-section">
             <!-- Availability Banner -->
-            <div id="availabilityBanner" class="availability-banner" style="display: none;">
-                <h3 id="availabilityTitle">✅ Fresh Eggs Available Now!</h3>
-                <p id="availabilityMessage">Pick up your fresh eggs today</p>
-                <a href="reserve.html" class="reserve-btn" id="reserveBtn">Reserve Your Eggs</a>
+            <div id="availabilityBanner" class="availability-banner">
+                <h3 id="availabilityTitle">Checking availability...</h3>
+                <p id="availabilityMessage"></p>
+                <a href="reserve.html" class="reserve-btn" id="reserveBtn" style="visibility: hidden;">Reserve Your Eggs</a>
             </div>
 
             <h1>Fresh Backyard Eggs 🥚</h1>
@@ -49,11 +49,7 @@
                 <p id="pricingDescription">Pay what you can! All proceeds go toward chicken care and feeding.</p>
 
                 <p><strong>Payment Methods:</strong></p>
-                <ul id="paymentMethodsList">
-                    <li>Cash</li>
-                    <li>Zelle: <strong>(773) 672-9100</strong></li>
-                    <li>Venmo: <strong>@Eddie_Correa95</strong></li>
-                </ul>
+                <ul id="paymentMethodsList"></ul>
             </div>
 
             <h2>Egg Care & Handling</h2>
@@ -101,7 +97,7 @@
         // Load pricing from content.json
         async function loadPricing() {
             try {
-                const response = await fetch('/data/content.json?t=' + Date.now());
+                const response = await fetch('/data/content.json');
                 const data = await response.json();
 
                 if (data.pricing) {
@@ -130,7 +126,7 @@
         // Load availability status
         async function loadAvailability() {
             try {
-                const response = await fetch('/data/batches.json?t=' + Date.now());
+                const response = await fetch('/data/batches.json');
                 const data = await response.json();
 
                 if (data.availability) {
@@ -165,8 +161,8 @@
                         message.textContent = data.availability.message;
                     }
 
-                    // Show banner
-                    banner.style.display = 'block';
+                    // Reveal the button now that we know the status
+                    btn.style.visibility = 'visible';
                 }
             } catch (error) {
                 console.error('Error loading availability:', error);

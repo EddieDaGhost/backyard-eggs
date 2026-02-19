@@ -220,6 +220,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
+        }
+
+        .item > div:first-child {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .item-actions {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
         }
 
         .item-actions button {
@@ -228,6 +240,18 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
 
         .edit-btn {
@@ -302,6 +326,7 @@
             <button class="tab" data-tab="pricing">Pricing</button>
             <button class="tab" data-tab="chickens">Chickens</button>
             <button class="tab" data-tab="facts">Fun Facts</button>
+            <button class="tab" data-tab="siteinfo">Site Info</button>
             <button class="tab" data-tab="reservations">Reservations</button>
         </div>
 
@@ -370,6 +395,7 @@
             <div class="section">
                 <h2>Manage Chickens</h2>
                 <ul id="chickenList" class="chicken-list"></ul>
+                <button class="add-btn" onclick="addChicken()">+ Add Chicken</button>
             </div>
         </div>
 
@@ -378,6 +404,22 @@
             <div class="section">
                 <h2>Manage Fun Facts</h2>
                 <ul id="factList" class="fact-list"></ul>
+                <button class="add-btn" onclick="addFact()">+ Add Fact</button>
+            </div>
+        </div>
+
+        <!-- Site Info Tab -->
+        <div id="siteinfo-tab" class="tab-content">
+            <div class="section">
+                <h2>Site Info</h2>
+                <div class="form-group">
+                    <label>Site Title</label>
+                    <input type="text" id="siteTitle" placeholder="Backyard Eggs">
+                </div>
+                <div class="form-group">
+                    <label>Tagline</label>
+                    <input type="text" id="siteTagline" placeholder="Fresh from Our Flock to Your Table">
+                </div>
             </div>
         </div>
 
@@ -520,6 +562,7 @@
             renderPricing();
             renderChickens();
             renderFacts();
+            renderSiteInfo();
             renderReservations();
         }
 
@@ -640,25 +683,141 @@
             document.getElementById('venmoHandle').value = contentData.pricing?.paymentMethods?.venmo || '';
         }
 
+        // Site Info
+        function renderSiteInfo() {
+            document.getElementById('siteTitle').value = contentData.siteInfo?.title || '';
+            document.getElementById('siteTagline').value = contentData.siteInfo?.tagline || '';
+        }
+
+        // Helpers
+        function escHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
         // Chickens
         function renderChickens() {
             const list = document.getElementById('chickenList');
-            list.innerHTML = (contentData.chickens || []).map(c => `
-                <li class="item">
-                    <div><strong>${c.name}</strong> - ${c.breed}<br><small>${c.personality.substring(0, 60)}...</small></div>
+            const chickens = contentData.chickens || [];
+            if (chickens.length === 0) {
+                list.innerHTML = '<li style="text-align:center;color:#666;padding:2rem;">No chickens yet. Click "+ Add Chicken" below.</li>';
+                return;
+            }
+            list.innerHTML = chickens.map((c, i) => `
+                <li class="chicken-item" data-idx="${i}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #6E7B49;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="font-weight:700;color:#6E7B49;font-size:1.05rem;">${escHtml(c.name) || 'New Chicken'}</span>
+                        <button onclick="deleteChicken(${i})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Name</label>
+                            <input class="c-name" type="text" value="${escHtml(c.name)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Breed</label>
+                            <input class="c-breed" type="text" value="${escHtml(c.breed)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Personality</label>
+                        <textarea class="c-personality" rows="3" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;resize:vertical;box-sizing:border-box;">${escHtml(c.personality)}</textarea>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Egg Production</label>
+                            <input class="c-eggs" type="text" value="${escHtml(c.eggProduction)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Image Filename</label>
+                            <input class="c-image" type="text" value="${escHtml(c.image)}" placeholder="e.g. beyonce.jpg" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                    </div>
                 </li>
             `).join('');
+        }
+
+        function syncChickensFromDom() {
+            const items = document.querySelectorAll('.chicken-item');
+            contentData.chickens = Array.from(items).map(item => {
+                const name = item.querySelector('.c-name').value;
+                return {
+                    id: name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+                    name,
+                    breed: item.querySelector('.c-breed').value,
+                    personality: item.querySelector('.c-personality').value,
+                    eggProduction: item.querySelector('.c-eggs').value,
+                    image: item.querySelector('.c-image').value
+                };
+            });
+        }
+
+        function addChicken() {
+            syncChickensFromDom();
+            contentData.chickens.push({ id: '', name: '', breed: '', personality: '', eggProduction: '', image: '' });
+            renderChickens();
+            document.getElementById('chickenList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteChicken(i) {
+            syncChickensFromDom();
+            const name = contentData.chickens[i]?.name || 'this chicken';
+            if (confirm(`Delete ${name}?`)) {
+                contentData.chickens.splice(i, 1);
+                renderChickens();
+            }
         }
 
         // Facts
         function renderFacts() {
             const list = document.getElementById('factList');
-            list.innerHTML = (contentData.funFacts || []).map(f => `
-                <li class="item">
-                    <div><strong>${f.title}</strong><br><small>${f.content.substring(0, 80)}...</small></div>
+            const facts = contentData.funFacts || [];
+            if (facts.length === 0) {
+                list.innerHTML = '<li style="text-align:center;color:#666;padding:2rem;">No facts yet. Click "+ Add Fact" below.</li>';
+                return;
+            }
+            list.innerHTML = facts.map((f, i) => `
+                <li class="fact-item" data-idx="${i}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #6E7B49;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="font-weight:700;color:#6E7B49;">Fact #${i + 1}</span>
+                        <button onclick="deleteFact(${i})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Title</label>
+                        <input class="f-title" type="text" value="${escHtml(f.title)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Content</label>
+                        <textarea class="f-content" rows="3" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;resize:vertical;box-sizing:border-box;">${escHtml(f.content)}</textarea>
+                    </div>
                 </li>
             `).join('');
         }
+
+        function syncFactsFromDom() {
+            const items = document.querySelectorAll('.fact-item');
+            contentData.funFacts = Array.from(items).map((item, i) => ({
+                id: contentData.funFacts[i]?.id ?? (i + 1),
+                title: item.querySelector('.f-title').value,
+                content: item.querySelector('.f-content').value
+            }));
+        }
+
+        function addFact() {
+            syncFactsFromDom();
+            contentData.funFacts.push({ id: null, title: '', content: '' });
+            renderFacts();
+            document.getElementById('factList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteFact(i) {
+            syncFactsFromDom();
+            const title = contentData.funFacts[i]?.title || 'this fact';
+            if (confirm(`Delete "${title}"?`)) {
+                contentData.funFacts.splice(i, 1);
+                renderFacts();
+            }
+        }
+
 
         // Reservations
         function renderReservations() {
@@ -747,6 +906,10 @@
 
         // Save
         async function saveAll() {
+            // Sync always-visible form fields into contentData before saving
+            syncChickensFromDom();
+            syncFactsFromDom();
+
             // Collect data
             const activeStatus = document.querySelector('.status-btn.active')?.dataset.status || 'available';
             batchData.availability = {
@@ -763,6 +926,11 @@
                     zelle: document.getElementById('zelleNumber').value,
                     venmo: document.getElementById('venmoHandle').value
                 }
+            };
+
+            contentData.siteInfo = {
+                title: document.getElementById('siteTitle').value,
+                tagline: document.getElementById('siteTagline').value
             };
 
             // Save via function
