@@ -220,6 +220,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
+        }
+
+        .item > div:first-child {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .item-actions {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
         }
 
         .item-actions button {
@@ -228,6 +240,18 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
 
         .edit-btn {
@@ -302,6 +326,7 @@
             <button class="tab" data-tab="pricing">Pricing</button>
             <button class="tab" data-tab="chickens">Chickens</button>
             <button class="tab" data-tab="facts">Fun Facts</button>
+            <button class="tab" data-tab="siteinfo">Site Info</button>
             <button class="tab" data-tab="reservations">Reservations</button>
         </div>
 
@@ -380,6 +405,21 @@
                 <h2>Manage Fun Facts</h2>
                 <ul id="factList" class="fact-list"></ul>
                 <button class="add-btn" onclick="addFact()">+ Add Fact</button>
+            </div>
+        </div>
+
+        <!-- Site Info Tab -->
+        <div id="siteinfo-tab" class="tab-content">
+            <div class="section">
+                <h2>Site Info</h2>
+                <div class="form-group">
+                    <label>Site Title</label>
+                    <input type="text" id="siteTitle" placeholder="Backyard Eggs">
+                </div>
+                <div class="form-group">
+                    <label>Tagline</label>
+                    <input type="text" id="siteTagline" placeholder="Fresh from Our Flock to Your Table">
+                </div>
             </div>
         </div>
 
@@ -522,6 +562,7 @@
             renderPricing();
             renderChickens();
             renderFacts();
+            renderSiteInfo();
             renderReservations();
         }
 
@@ -642,6 +683,12 @@
             document.getElementById('venmoHandle').value = contentData.pricing?.paymentMethods?.venmo || '';
         }
 
+        // Site Info
+        function renderSiteInfo() {
+            document.getElementById('siteTitle').value = contentData.siteInfo?.title || '';
+            document.getElementById('siteTagline').value = contentData.siteInfo?.tagline || '';
+        }
+
         // Helpers
         function escHtml(str) {
             return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -686,9 +733,15 @@
                         <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Personality</label>
                         <textarea id="c-personality-${i}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem; min-height: 70px; resize: vertical;">${escHtml(c.personality)}</textarea>
                     </div>
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Egg Production</label>
-                        <input id="c-eggs-${i}" type="text" value="${escHtml(c.eggProduction)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Egg Production</label>
+                            <input id="c-eggs-${i}" type="text" value="${escHtml(c.eggProduction)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Image Filename</label>
+                            <input id="c-image-${i}" type="text" value="${escHtml(c.image)}" placeholder="e.g. beyonce.jpg" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                        </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button onclick="saveChicken(${i})" style="background: #28a745; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save</button>
@@ -703,6 +756,7 @@
             const breed = document.getElementById(`c-breed-${i}`).value.trim();
             const personality = document.getElementById(`c-personality-${i}`).value.trim();
             const eggProduction = document.getElementById(`c-eggs-${i}`).value.trim();
+            const image = document.getElementById(`c-image-${i}`).value.trim();
 
             if (!name || !breed) {
                 alert('Name and breed are required.');
@@ -715,7 +769,8 @@
                 name,
                 breed,
                 personality,
-                eggProduction
+                eggProduction,
+                image
             };
             renderChickens();
         }
@@ -925,6 +980,11 @@
                     zelle: document.getElementById('zelleNumber').value,
                     venmo: document.getElementById('venmoHandle').value
                 }
+            };
+
+            contentData.siteInfo = {
+                title: document.getElementById('siteTitle').value,
+                tagline: document.getElementById('siteTagline').value
             };
 
             // Save via function
