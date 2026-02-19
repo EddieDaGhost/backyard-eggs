@@ -370,6 +370,7 @@
             <div class="section">
                 <h2>Manage Chickens</h2>
                 <ul id="chickenList" class="chicken-list"></ul>
+                <button class="add-btn" onclick="addChicken()">+ Add Chicken</button>
             </div>
         </div>
 
@@ -378,6 +379,7 @@
             <div class="section">
                 <h2>Manage Fun Facts</h2>
                 <ul id="factList" class="fact-list"></ul>
+                <button class="add-btn" onclick="addFact()">+ Add Fact</button>
             </div>
         </div>
 
@@ -640,24 +642,184 @@
             document.getElementById('venmoHandle').value = contentData.pricing?.paymentMethods?.venmo || '';
         }
 
+        // Helpers
+        function escHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
         // Chickens
         function renderChickens() {
             const list = document.getElementById('chickenList');
-            list.innerHTML = (contentData.chickens || []).map(c => `
-                <li class="item">
-                    <div><strong>${c.name}</strong> - ${c.breed}<br><small>${c.personality.substring(0, 60)}...</small></div>
+            const chickens = contentData.chickens || [];
+            if (chickens.length === 0) {
+                list.innerHTML = '<li style="text-align: center; color: #666; padding: 2rem;">No chickens yet. Click "Add Chicken" to add one!</li>';
+                return;
+            }
+            list.innerHTML = chickens.map((c, i) => `
+                <li class="item" id="chicken-item-${i}">
+                    <div><strong>${escHtml(c.name)}</strong> — ${escHtml(c.breed)}<br><small>${escHtml(c.personality.substring(0, 80))}${c.personality.length > 80 ? '...' : ''}</small></div>
+                    <div class="item-actions">
+                        <button class="edit-btn" onclick="editChicken(${i})">Edit</button>
+                        <button class="delete-btn" onclick="deleteChicken(${i})">Delete</button>
+                    </div>
                 </li>
             `).join('');
+        }
+
+        function editChicken(i) {
+            const c = contentData.chickens[i];
+            const item = document.getElementById(`chicken-item-${i}`);
+            item.style.display = 'block';
+            item.innerHTML = `
+                <div style="width: 100%;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Name</label>
+                            <input id="c-name-${i}" type="text" value="${escHtml(c.name)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Breed</label>
+                            <input id="c-breed-${i}" type="text" value="${escHtml(c.breed)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Personality</label>
+                        <textarea id="c-personality-${i}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem; min-height: 70px; resize: vertical;">${escHtml(c.personality)}</textarea>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Egg Production</label>
+                        <input id="c-eggs-${i}" type="text" value="${escHtml(c.eggProduction)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="saveChicken(${i})" style="background: #28a745; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save</button>
+                        <button onclick="cancelChicken(${i})" style="background: #6c757d; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveChicken(i) {
+            const name = document.getElementById(`c-name-${i}`).value.trim();
+            const breed = document.getElementById(`c-breed-${i}`).value.trim();
+            const personality = document.getElementById(`c-personality-${i}`).value.trim();
+            const eggProduction = document.getElementById(`c-eggs-${i}`).value.trim();
+
+            if (!name || !breed) {
+                alert('Name and breed are required.');
+                return;
+            }
+
+            contentData.chickens[i] = {
+                ...contentData.chickens[i],
+                id: name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+                name,
+                breed,
+                personality,
+                eggProduction
+            };
+            renderChickens();
+        }
+
+        function cancelChicken(i) {
+            // If this was a newly added row with no name yet, remove it
+            if (!contentData.chickens[i].name) {
+                contentData.chickens.splice(i, 1);
+            }
+            renderChickens();
+        }
+
+        function deleteChicken(i) {
+            const name = contentData.chickens[i].name;
+            if (confirm(`Delete ${name}?`)) {
+                contentData.chickens.splice(i, 1);
+                renderChickens();
+            }
+        }
+
+        function addChicken() {
+            contentData.chickens.push({ id: '', name: '', breed: '', personality: '', eggProduction: '', image: '' });
+            renderChickens();
+            editChicken(contentData.chickens.length - 1);
         }
 
         // Facts
         function renderFacts() {
             const list = document.getElementById('factList');
-            list.innerHTML = (contentData.funFacts || []).map(f => `
-                <li class="item">
-                    <div><strong>${f.title}</strong><br><small>${f.content.substring(0, 80)}...</small></div>
+            const facts = contentData.funFacts || [];
+            if (facts.length === 0) {
+                list.innerHTML = '<li style="text-align: center; color: #666; padding: 2rem;">No facts yet. Click "Add Fact" to add one!</li>';
+                return;
+            }
+            list.innerHTML = facts.map((f, i) => `
+                <li class="item" id="fact-item-${i}">
+                    <div><strong>${escHtml(f.title)}</strong><br><small>${escHtml(f.content.substring(0, 80))}${f.content.length > 80 ? '...' : ''}</small></div>
+                    <div class="item-actions">
+                        <button class="edit-btn" onclick="editFact(${i})">Edit</button>
+                        <button class="delete-btn" onclick="deleteFact(${i})">Delete</button>
+                    </div>
                 </li>
             `).join('');
+        }
+
+        function editFact(i) {
+            const f = contentData.funFacts[i];
+            const item = document.getElementById(`fact-item-${i}`);
+            item.style.display = 'block';
+            item.innerHTML = `
+                <div style="width: 100%;">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Title</label>
+                        <input id="f-title-${i}" type="text" value="${escHtml(f.title)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Content</label>
+                        <textarea id="f-content-${i}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem; min-height: 80px; resize: vertical;">${escHtml(f.content)}</textarea>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="saveFact(${i})" style="background: #28a745; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save</button>
+                        <button onclick="cancelFact(${i})" style="background: #6c757d; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveFact(i) {
+            const title = document.getElementById(`f-title-${i}`).value.trim();
+            const content = document.getElementById(`f-content-${i}`).value.trim();
+
+            if (!title || !content) {
+                alert('Title and content are required.');
+                return;
+            }
+
+            contentData.funFacts[i] = {
+                id: contentData.funFacts[i].id || (i + 1),
+                title,
+                content
+            };
+            renderFacts();
+        }
+
+        function cancelFact(i) {
+            // If this was a newly added row with no title yet, remove it
+            if (!contentData.funFacts[i].title) {
+                contentData.funFacts.splice(i, 1);
+            }
+            renderFacts();
+        }
+
+        function deleteFact(i) {
+            const title = contentData.funFacts[i].title;
+            if (confirm(`Delete "${title}"?`)) {
+                contentData.funFacts.splice(i, 1);
+                renderFacts();
+            }
+        }
+
+        function addFact() {
+            contentData.funFacts.push({ id: null, title: '', content: '' });
+            renderFacts();
+            editFact(contentData.funFacts.length - 1);
         }
 
         // Reservations
