@@ -99,6 +99,28 @@
 
     <script src="js/scripts.js"></script>
     <script>
+        const SUBMITTED_KEY = 'reservation_submitted';
+
+        function showAlreadySubmitted() {
+            document.getElementById('reservationForm').style.display = 'none';
+            const msg = document.getElementById('formMessage');
+            msg.style.display = 'block';
+            msg.style.background = '#d4edda';
+            msg.style.color = '#155724';
+            msg.innerHTML = `
+                <strong>✅ You're already on the list!</strong><br>
+                You've already submitted a reservation this session. We'll be in touch soon to confirm pickup details.
+                If you need to make changes, please contact us directly.
+            `;
+        }
+
+        // On load: check if already submitted this session
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem(SUBMITTED_KEY)) {
+                showAlreadySubmitted();
+            }
+        });
+
         document.getElementById('reservationForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -131,7 +153,9 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    // Success
+                    // Mark submitted for this session and hide the form
+                    sessionStorage.setItem(SUBMITTED_KEY, '1');
+
                     formMessage.style.display = 'block';
                     formMessage.style.background = '#d4edda';
                     formMessage.style.color = '#155724';
@@ -141,10 +165,7 @@
                         We'll contact you at ${formData.email} to confirm availability and pickup details.
                     `;
 
-                    // Reset form
-                    document.getElementById('reservationForm').reset();
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
+                    document.getElementById('reservationForm').style.display = 'none';
 
                     // Scroll to message
                     formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

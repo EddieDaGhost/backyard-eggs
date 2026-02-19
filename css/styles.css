@@ -352,6 +352,137 @@ footer p {
     animation: pulse 2s ease-in-out infinite;
 }
 
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #5a6339 0%, #6E7B49 60%, #7d8f52 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.hero-inner {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.hero-egg {
+    font-size: 4.5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.hero-section h1 {
+    font-size: 2.75rem;
+    color: white;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.15rem;
+    opacity: 0.9;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* Care Cards Grid */
+.care-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.care-card {
+    background: var(--light-gray);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-top: 4px solid var(--primary-green);
+}
+
+.care-card h3 {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.care-icon {
+    font-size: 2.25rem;
+    line-height: 1;
+}
+
+.care-card ul {
+    margin: 0.75rem 0 0;
+    padding-left: 1.25rem;
+}
+
+.care-card li {
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+}
+
+.storage-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.storage-option {
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+}
+
+.storage-option span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.storage-option p {
+    margin: 0.2rem 0 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.freshness-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.freshness-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.95rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge--fresh {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge--ok {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge--old {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .mobile-nav-toggle {
@@ -463,6 +594,22 @@ footer p {
         padding: 1rem;
         font-size: 1rem;
     }
+
+    .hero-section {
+        padding: 3rem 1.5rem;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-egg {
+        font-size: 3.5rem;
+    }
+
+    .care-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 480px) {
@@ -493,5 +640,13 @@ footer p {
 
     .chicken-card h3 {
         font-size: 1.5rem;
+    }
+
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+
+    .hero-egg {
+        font-size: 3rem;
     }
 }

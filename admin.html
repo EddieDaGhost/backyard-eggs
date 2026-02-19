@@ -614,6 +614,7 @@
                             <small>${b.startDate} - ${b.endDate}</small>
                         </div>
                         <div class="item-actions">
+                            <button class="edit-btn" onclick="editBatch(${b.id})">Edit</button>
                             <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
                         </div>
                     </li>
@@ -665,6 +666,25 @@
 
             batch.endDate = end;
             batch.status = 'published';
+            renderBatches();
+        }
+
+        function editBatch(id) {
+            const batch = batchData.batches.find(b => b.id === id);
+            if (!batch) return;
+
+            const num = prompt('Batch number:', batch.number);
+            if (num === null) return;
+
+            const start = prompt('Start date (MM/DD/YYYY):', batch.startDate);
+            if (start === null) return;
+
+            const end = prompt('End date (MM/DD/YYYY):', batch.endDate);
+            if (end === null) return;
+
+            batch.number = num;
+            batch.startDate = start;
+            batch.endDate = end;
             renderBatches();
         }
 
