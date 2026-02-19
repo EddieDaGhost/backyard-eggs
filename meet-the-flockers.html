@@ -56,7 +56,7 @@
         // Load chickens from content.json
         async function loadChickens() {
             try {
-                const response = await fetch('/data/content.json?t=' + Date.now());
+                const response = await fetch('/data/content.json');
                 const data = await response.json();
 
                 if (data.chickens && data.chickens.length > 0) {
