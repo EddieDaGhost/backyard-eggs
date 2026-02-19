@@ -699,102 +699,72 @@
             const list = document.getElementById('chickenList');
             const chickens = contentData.chickens || [];
             if (chickens.length === 0) {
-                list.innerHTML = '<li style="text-align: center; color: #666; padding: 2rem;">No chickens yet. Click "Add Chicken" to add one!</li>';
+                list.innerHTML = '<li style="text-align:center;color:#666;padding:2rem;">No chickens yet. Click "+ Add Chicken" below.</li>';
                 return;
             }
             list.innerHTML = chickens.map((c, i) => `
-                <li class="item" id="chicken-item-${i}">
-                    <div><strong>${escHtml(c.name)}</strong> — ${escHtml(c.breed)}<br><small>${escHtml(c.personality.substring(0, 80))}${c.personality.length > 80 ? '...' : ''}</small></div>
-                    <div class="item-actions">
-                        <button class="edit-btn" onclick="editChicken(${i})">Edit</button>
-                        <button class="delete-btn" onclick="deleteChicken(${i})">Delete</button>
+                <li class="chicken-item" data-idx="${i}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #6E7B49;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="font-weight:700;color:#6E7B49;font-size:1.05rem;">${escHtml(c.name) || 'New Chicken'}</span>
+                        <button onclick="deleteChicken(${i})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Name</label>
+                            <input class="c-name" type="text" value="${escHtml(c.name)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Breed</label>
+                            <input class="c-breed" type="text" value="${escHtml(c.breed)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Personality</label>
+                        <textarea class="c-personality" rows="3" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;resize:vertical;box-sizing:border-box;">${escHtml(c.personality)}</textarea>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Egg Production</label>
+                            <input class="c-eggs" type="text" value="${escHtml(c.eggProduction)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Image Filename</label>
+                            <input class="c-image" type="text" value="${escHtml(c.image)}" placeholder="e.g. beyonce.jpg" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                        </div>
                     </div>
                 </li>
             `).join('');
         }
 
-        function editChicken(i) {
-            const c = contentData.chickens[i];
-            const item = document.getElementById(`chicken-item-${i}`);
-            item.style.display = 'block';
-            item.innerHTML = `
-                <div style="width: 100%;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Name</label>
-                            <input id="c-name-${i}" type="text" value="${escHtml(c.name)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Breed</label>
-                            <input id="c-breed-${i}" type="text" value="${escHtml(c.breed)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Personality</label>
-                        <textarea id="c-personality-${i}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem; min-height: 70px; resize: vertical;">${escHtml(c.personality)}</textarea>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Egg Production</label>
-                            <input id="c-eggs-${i}" type="text" value="${escHtml(c.eggProduction)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Image Filename</label>
-                            <input id="c-image-${i}" type="text" value="${escHtml(c.image)}" placeholder="e.g. beyonce.jpg" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="saveChicken(${i})" style="background: #28a745; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save</button>
-                        <button onclick="cancelChicken(${i})" style="background: #6c757d; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                </div>
-            `;
+        function syncChickensFromDom() {
+            const items = document.querySelectorAll('.chicken-item');
+            contentData.chickens = Array.from(items).map(item => {
+                const name = item.querySelector('.c-name').value;
+                return {
+                    id: name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+                    name,
+                    breed: item.querySelector('.c-breed').value,
+                    personality: item.querySelector('.c-personality').value,
+                    eggProduction: item.querySelector('.c-eggs').value,
+                    image: item.querySelector('.c-image').value
+                };
+            });
         }
 
-        function saveChicken(i) {
-            const name = document.getElementById(`c-name-${i}`).value.trim();
-            const breed = document.getElementById(`c-breed-${i}`).value.trim();
-            const personality = document.getElementById(`c-personality-${i}`).value.trim();
-            const eggProduction = document.getElementById(`c-eggs-${i}`).value.trim();
-            const image = document.getElementById(`c-image-${i}`).value.trim();
-
-            if (!name || !breed) {
-                alert('Name and breed are required.');
-                return;
-            }
-
-            contentData.chickens[i] = {
-                ...contentData.chickens[i],
-                id: name.toLowerCase().replace(/[^a-z0-9]/g, ''),
-                name,
-                breed,
-                personality,
-                eggProduction,
-                image
-            };
+        function addChicken() {
+            syncChickensFromDom();
+            contentData.chickens.push({ id: '', name: '', breed: '', personality: '', eggProduction: '', image: '' });
             renderChickens();
-        }
-
-        function cancelChicken(i) {
-            // If this was a newly added row with no name yet, remove it
-            if (!contentData.chickens[i].name) {
-                contentData.chickens.splice(i, 1);
-            }
-            renderChickens();
+            document.getElementById('chickenList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteChicken(i) {
-            const name = contentData.chickens[i].name;
+            syncChickensFromDom();
+            const name = contentData.chickens[i]?.name || 'this chicken';
             if (confirm(`Delete ${name}?`)) {
                 contentData.chickens.splice(i, 1);
                 renderChickens();
             }
-        }
-
-        function addChicken() {
-            contentData.chickens.push({ id: '', name: '', breed: '', personality: '', eggProduction: '', image: '' });
-            renderChickens();
-            editChicken(contentData.chickens.length - 1);
         }
 
         // Facts
@@ -802,80 +772,52 @@
             const list = document.getElementById('factList');
             const facts = contentData.funFacts || [];
             if (facts.length === 0) {
-                list.innerHTML = '<li style="text-align: center; color: #666; padding: 2rem;">No facts yet. Click "Add Fact" to add one!</li>';
+                list.innerHTML = '<li style="text-align:center;color:#666;padding:2rem;">No facts yet. Click "+ Add Fact" below.</li>';
                 return;
             }
             list.innerHTML = facts.map((f, i) => `
-                <li class="item" id="fact-item-${i}">
-                    <div><strong>${escHtml(f.title)}</strong><br><small>${escHtml(f.content.substring(0, 80))}${f.content.length > 80 ? '...' : ''}</small></div>
-                    <div class="item-actions">
-                        <button class="edit-btn" onclick="editFact(${i})">Edit</button>
-                        <button class="delete-btn" onclick="deleteFact(${i})">Delete</button>
+                <li class="fact-item" data-idx="${i}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #6E7B49;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="font-weight:700;color:#6E7B49;">Fact #${i + 1}</span>
+                        <button onclick="deleteFact(${i})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Title</label>
+                        <input class="f-title" type="text" value="${escHtml(f.title)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Content</label>
+                        <textarea class="f-content" rows="3" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;resize:vertical;box-sizing:border-box;">${escHtml(f.content)}</textarea>
                     </div>
                 </li>
             `).join('');
         }
 
-        function editFact(i) {
-            const f = contentData.funFacts[i];
-            const item = document.getElementById(`fact-item-${i}`);
-            item.style.display = 'block';
-            item.innerHTML = `
-                <div style="width: 100%;">
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Title</label>
-                        <input id="f-title-${i}" type="text" value="${escHtml(f.title)}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem;">
-                    </div>
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Content</label>
-                        <textarea id="f-content-${i}" style="width: 100%; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 1rem; min-height: 80px; resize: vertical;">${escHtml(f.content)}</textarea>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="saveFact(${i})" style="background: #28a745; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Save</button>
-                        <button onclick="cancelFact(${i})" style="background: #6c757d; color: white; padding: 0.5rem 1.25rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                </div>
-            `;
+        function syncFactsFromDom() {
+            const items = document.querySelectorAll('.fact-item');
+            contentData.funFacts = Array.from(items).map((item, i) => ({
+                id: contentData.funFacts[i]?.id ?? (i + 1),
+                title: item.querySelector('.f-title').value,
+                content: item.querySelector('.f-content').value
+            }));
         }
 
-        function saveFact(i) {
-            const title = document.getElementById(`f-title-${i}`).value.trim();
-            const content = document.getElementById(`f-content-${i}`).value.trim();
-
-            if (!title || !content) {
-                alert('Title and content are required.');
-                return;
-            }
-
-            contentData.funFacts[i] = {
-                id: contentData.funFacts[i].id || (i + 1),
-                title,
-                content
-            };
+        function addFact() {
+            syncFactsFromDom();
+            contentData.funFacts.push({ id: null, title: '', content: '' });
             renderFacts();
-        }
-
-        function cancelFact(i) {
-            // If this was a newly added row with no title yet, remove it
-            if (!contentData.funFacts[i].title) {
-                contentData.funFacts.splice(i, 1);
-            }
-            renderFacts();
+            document.getElementById('factList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteFact(i) {
-            const title = contentData.funFacts[i].title;
+            syncFactsFromDom();
+            const title = contentData.funFacts[i]?.title || 'this fact';
             if (confirm(`Delete "${title}"?`)) {
                 contentData.funFacts.splice(i, 1);
                 renderFacts();
             }
         }
 
-        function addFact() {
-            contentData.funFacts.push({ id: null, title: '', content: '' });
-            renderFacts();
-            editFact(contentData.funFacts.length - 1);
-        }
 
         // Reservations
         function renderReservations() {
@@ -964,6 +906,10 @@
 
         // Save
         async function saveAll() {
+            // Sync always-visible form fields into contentData before saving
+            syncChickensFromDom();
+            syncFactsFromDom();
+
             // Collect data
             const activeStatus = document.querySelector('.status-btn.active')?.dataset.status || 'available';
             batchData.availability = {
