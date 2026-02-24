@@ -482,7 +482,7 @@
 
             try {
                 // Validate password with server
-                const response = await fetch('/.netlify/functions/validate-password', {
+                const response = await fetch('/api/validate-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: pwd })
@@ -958,7 +958,7 @@
 
             // Save via function
             try {
-                const res = await fetch('/.netlify/functions/update-content', {
+                const res = await fetch('/api/update-content', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
