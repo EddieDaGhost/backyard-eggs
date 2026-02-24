@@ -13,18 +13,20 @@ module.exports = async function handler(req, res) {
     const githubToken = process.env.GITHUB_TOKEN;
     const owner = process.env.GITHUB_OWNER || 'EddieDaGhost';
     const repo = process.env.GITHUB_REPO || 'backyard-eggs';
+    const branch = process.env.GITHUB_BRANCH || 'main';
 
-    if (batches) {
-      await updateFile(githubToken, owner, repo, 'data/batches.json', batches);
+    if (!githubToken) {
+      return res.status(500).json({
+        error: 'GitHub token not configured',
+        message: 'Add GITHUB_TOKEN to your Vercel environment variables and redeploy.'
+      });
     }
 
-    if (content) {
-      await updateFile(githubToken, owner, repo, 'data/content.json', content);
-    }
-
-    if (reservations) {
-      await updateFile(githubToken, owner, repo, 'data/reservations.json', reservations);
-    }
+    await Promise.all([
+      batches      ? updateFile(githubToken, owner, repo, 'data/batches.json',      batches,      branch) : null,
+      content      ? updateFile(githubToken, owner, repo, 'data/content.json',      content,      branch) : null,
+      reservations ? updateFile(githubToken, owner, repo, 'data/reservations.json', reservations, branch) : null,
+    ].filter(Boolean));
 
     return res.status(200).json({
       success: true,
@@ -40,7 +42,7 @@ module.exports = async function handler(req, res) {
   }
 };
 
-async function updateFile(token, owner, repo, path, data) {
+async function updateFile(token, owner, repo, path, data, branch) {
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
   const getRes = await fetch(url, {
@@ -69,7 +71,7 @@ async function updateFile(token, owner, repo, path, data) {
       message: `Update ${path} via admin dashboard - ${new Date().toISOString()}`,
       content,
       sha,
-      branch: 'main'
+      branch
     })
   });
 
