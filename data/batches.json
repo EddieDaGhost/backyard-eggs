@@ -7,11 +7,19 @@
       "endDate": "02/20/2026",
       "active": true,
       "status": "published"
+    },
+    {
+      "id": 2,
+      "number": "02",
+      "startDate": "02/21/2026",
+      "endDate": "",
+      "active": true,
+      "status": "draft"
     }
   ],
   "availability": {
     "status": "limited",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-02-22"
+    "lastUpdated": "2026-02-24"
   }
 }
