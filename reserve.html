@@ -65,8 +65,6 @@
                     <label for="batch">Preferred Batch (optional)</label>
                     <select id="batch" name="batch">
                         <option value="">No preference</option>
-                        <option value="batch-01">Batch #01</option>
-                        <option value="batch-02">Batch #02</option>
                         <option value="next-available">Next available</option>
                     </select>
                 </div>
@@ -101,6 +99,28 @@
     <script>
         const SUBMITTED_KEY = 'reservation_submitted';
 
+        async function loadBatchOptions() {
+            try {
+                const response = await fetch('/data/batches.json');
+                const data = await response.json();
+                if (!data.batches) return;
+
+                const select = document.getElementById('batch');
+                const nextAvail = select.querySelector('[value="next-available"]');
+
+                data.batches
+                    .filter(b => b.status !== 'draft' && b.endDate)
+                    .forEach(b => {
+                        const opt = document.createElement('option');
+                        opt.value = `batch-${b.number}`;
+                        opt.textContent = `Batch #${b.number} (${b.startDate} - ${b.endDate})`;
+                        select.insertBefore(opt, nextAvail);
+                    });
+            } catch (error) {
+                console.error('Error loading batches:', error);
+            }
+        }
+
         function showAlreadySubmitted() {
             document.getElementById('reservationForm').style.display = 'none';
             const msg = document.getElementById('formMessage');
@@ -114,8 +134,9 @@
             `;
         }
 
-        // On load: check if already submitted this session
+        // On load: populate batches and check session
         document.addEventListener('DOMContentLoaded', () => {
+            loadBatchOptions();
             if (sessionStorage.getItem(SUBMITTED_KEY)) {
                 showAlreadySubmitted();
             }
