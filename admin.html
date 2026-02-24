@@ -442,7 +442,6 @@
 
     <script>
         // State
-        let isLoggedIn = false;
         let adminPassword = '';
         let batchData = { batches: [], availability: {} };
         let contentData = {};
@@ -553,6 +552,7 @@
                 renderAll();
             } catch (error) {
                 console.error('Error loading data:', error);
+                showMessage('❌ Failed to load data. Please refresh the page.', 'error');
             }
         }
 
@@ -582,113 +582,110 @@
         // Batches
         function renderBatches() {
             const list = document.getElementById('batchList');
+            const batches = batchData.batches;
 
-            // Separate draft and published batches
-            const drafts = batchData.batches.filter(b => b.status === 'draft');
-            const published = batchData.batches.filter(b => b.status !== 'draft');
+            if (batches.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">No batches yet. Click "+ Start New Batch" to begin!</p>';
+                return;
+            }
+
+            const drafts = batches.filter(b => b.status === 'draft');
+            const published = batches.filter(b => b.status !== 'draft');
+
+            const inputStyle = 'width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;';
+            const labelStyle = 'display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;';
 
             let html = '';
 
             if (drafts.length > 0) {
-                html += '<h3 style="color: #ffc107; margin-top: 0;">📝 In Progress (Not visible on site)</h3>';
+                html += '<h3 style="color:#ffc107;margin-top:0;">📝 In Progress (Not visible on site)</h3>';
                 html += drafts.map(b => `
-                    <li class="item" style="border-left: 4px solid #ffc107;">
-                        <div>
-                            <strong>Batch #${b.number}</strong> <span style="background: #ffc107; color: #212121; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">DRAFT</span><br>
-                            <small>Started: ${b.startDate} • End date: <em>Not set</em></small>
+                    <li class="batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #ffc107;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <span style="background:#ffc107;color:#212121;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">DRAFT</span>
+                            <button onclick="deleteBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
                         </div>
-                        <div class="item-actions">
-                            <button class="edit-btn" onclick="completeBatch(${b.id})">Complete</button>
-                            <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
+                            <div>
+                                <label style="${labelStyle}">Batch #</label>
+                                <input class="b-number" type="text" value="${escHtml(b.number)}" placeholder="e.g. 03" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">Start Date</label>
+                                <input class="b-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">End Date</label>
+                                <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
                         </div>
+                        <button onclick="publishBatch(${b.id})" style="background:#28a745;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">✓ Publish</button>
                     </li>
                 `).join('');
             }
 
             if (published.length > 0) {
-                html += '<h3 style="color: #28a745; margin-top: 2rem;">✅ Published (Visible on site)</h3>';
+                html += `<h3 style="color:#28a745;margin-top:${drafts.length > 0 ? '2rem' : '0'};">✅ Published (Visible on site)</h3>`;
                 html += published.map(b => `
-                    <li class="item" style="border-left: 4px solid #28a745;">
-                        <div>
-                            <strong>Batch #${b.number}</strong> <span style="background: #28a745; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">LIVE</span><br>
-                            <small>${b.startDate} - ${b.endDate}</small>
+                    <li class="batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #28a745;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <span style="background:#28a745;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">LIVE</span>
+                            <button onclick="deleteBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
                         </div>
-                        <div class="item-actions">
-                            <button class="edit-btn" onclick="editBatch(${b.id})">Edit</button>
-                            <button class="delete-btn" onclick="deleteBatch(${b.id})">Delete</button>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;">
+                            <div>
+                                <label style="${labelStyle}">Batch #</label>
+                                <input class="b-number" type="text" value="${escHtml(b.number)}" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">Start Date</label>
+                                <input class="b-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">End Date</label>
+                                <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
                         </div>
                     </li>
                 `).join('');
             }
 
-            if (drafts.length === 0 && published.length === 0) {
-                html = '<p style="text-align: center; color: #666; padding: 2rem;">No batches yet. Click "Start New Batch" to begin!</p>';
-            }
-
             list.innerHTML = html;
         }
 
-        function addBatch() {
-            const num = prompt('Batch number:');
-            const start = prompt('Start date (MM/DD/YYYY):');
-
-            if (!num || !start) return;
-
-            const complete = confirm('Is this batch complete? Click OK if yes, Cancel to save as draft (in progress).');
-
-            let batch = {
-                id: batchData.batches.length ? Math.max(...batchData.batches.map(b => b.id)) + 1 : 1,
-                number: num,
-                startDate: start,
-                active: true
-            };
-
-            if (complete) {
-                const end = prompt('End date (MM/DD/YYYY):');
-                if (!end) return;
-                batch.endDate = end;
-                batch.status = 'published';
-            } else {
-                batch.endDate = '';
-                batch.status = 'draft';
-            }
-
-            batchData.batches.push(batch);
-            renderBatches();
+        function syncBatchesFromDom() {
+            document.querySelectorAll('.batch-item').forEach(item => {
+                const id = parseInt(item.dataset.id);
+                const batch = batchData.batches.find(b => b.id === id);
+                if (!batch) return;
+                batch.number = item.querySelector('.b-number').value;
+                batch.startDate = item.querySelector('.b-start').value;
+                batch.endDate = item.querySelector('.b-end').value;
+            });
         }
 
-        function completeBatch(id) {
+        function addBatch() {
+            syncBatchesFromDom();
+            const newId = batchData.batches.length ? Math.max(...batchData.batches.map(b => b.id)) + 1 : 1;
+            batchData.batches.push({ id: newId, number: '', startDate: '', endDate: '', active: true, status: 'draft' });
+            renderBatches();
+            document.getElementById('batchList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function publishBatch(id) {
+            syncBatchesFromDom();
             const batch = batchData.batches.find(b => b.id === id);
             if (!batch) return;
-
-            const end = prompt('Enter end date (MM/DD/YYYY) to publish this batch:', new Date().toLocaleDateString('en-US'));
-            if (!end) return;
-
-            batch.endDate = end;
+            if (!batch.endDate) {
+                alert('Please fill in an end date before publishing.');
+                return;
+            }
             batch.status = 'published';
             renderBatches();
         }
 
-        function editBatch(id) {
-            const batch = batchData.batches.find(b => b.id === id);
-            if (!batch) return;
-
-            const num = prompt('Batch number:', batch.number);
-            if (num === null) return;
-
-            const start = prompt('Start date (MM/DD/YYYY):', batch.startDate);
-            if (start === null) return;
-
-            const end = prompt('End date (MM/DD/YYYY):', batch.endDate);
-            if (end === null) return;
-
-            batch.number = num;
-            batch.startDate = start;
-            batch.endDate = end;
-            renderBatches();
-        }
-
         function deleteBatch(id) {
+            syncBatchesFromDom();
             if (confirm('Delete this batch?')) {
                 batchData.batches = batchData.batches.filter(b => b.id !== id);
                 renderBatches();
@@ -775,7 +772,7 @@
             syncChickensFromDom();
             contentData.chickens.push({ id: '', name: '', breed: '', personality: '', eggProduction: '', image: '' });
             renderChickens();
-            document.getElementById('chickenList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('chickenList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteChicken(i) {
@@ -826,7 +823,7 @@
             syncFactsFromDom();
             contentData.funFacts.push({ id: null, title: '', content: '' });
             renderFacts();
-            document.getElementById('factList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('factList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteFact(i) {
@@ -926,7 +923,13 @@
 
         // Save
         async function saveAll() {
-            // Sync always-visible form fields into contentData before saving
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ Saving...';
+
+            // Sync all inline editors into state before saving
+            syncBatchesFromDom();
             syncChickensFromDom();
             syncFactsFromDom();
 
@@ -975,6 +978,9 @@
                 }
             } catch (error) {
                 showMessage('❌ Network error. Check connection.', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
             }
         }
 
@@ -982,6 +988,7 @@
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.className = `message ${type}`;
+            msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             setTimeout(() => msg.className = 'message', 5000);
         }
     </script>
