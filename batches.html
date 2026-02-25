@@ -62,7 +62,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
+        <p>&copy; 2026 Backyard Eggs - <span id="footerCopyrightTagline">Fresh from Our Flock to Your Table</span></p>
         <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
@@ -73,10 +73,17 @@
             try {
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
+                if (data.siteInfo?.tagline) document.getElementById('footerCopyrightTagline').textContent = data.siteInfo.tagline;
                 if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
                 if (data.pages?.batches) {
                     const b = data.pages.batches;
-                    if (b.freshnessTip) document.getElementById('freshnessTip').innerHTML = '<strong>' + b.freshnessTip + '</strong>';
+                    if (b.freshnessTip) {
+                        const tipEl = document.getElementById('freshnessTip');
+                        const strong = document.createElement('strong');
+                        strong.textContent = b.freshnessTip;
+                        tipEl.textContent = '';
+                        tipEl.appendChild(strong);
+                    }
                     if (b.donationText) document.getElementById('donationText').textContent = b.donationText;
                 }
             } catch (error) {
