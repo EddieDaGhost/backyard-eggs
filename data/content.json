@@ -1,7 +1,32 @@
 {
   "siteInfo": {
     "title": "Backyard Eggs",
-    "tagline": "Fresh from Our Flock to Your Table"
+    "tagline": "Fresh from Our Flock to Your Table",
+    "heroHeading": "Fresh from Our Flock,<br>Straight to Your Table",
+    "heroSubtext": "Happy, healthy backyard hens. Pay what you can — every carton goes right back to the girls.",
+    "footerTagline": "Made with ❤️ for happy chickens and egg lovers"
+  },
+  "pages": {
+    "home": {
+      "guideTitle": "Fresh Egg Handling & Cleaning Instructions",
+      "guideSubtitle": "Enjoy your eggs within 3–4 weeks of the lay dates for best quality!"
+    },
+    "batches": {
+      "freshnessTip": "Enjoy your eggs within 3-4 weeks of the lay dates for best quality!",
+      "donationText": "Suggested Batch Donation: $5 per dozen, or $4 if you return your carton!"
+    },
+    "meetFlockers": {
+      "description": "Get to know our wonderful backyard chickens! Each hen has her own personality and produces beautiful, fresh eggs."
+    },
+    "chickenFax": {
+      "description": "Discover fascinating facts about our feathered friends and the amazing eggs they produce!"
+    },
+    "reserve": {
+      "description": "Fill out the form below to reserve your fresh eggs. We'll get back to you as soon as possible!",
+      "afterSubmitTitle": "After Submitting",
+      "afterSubmitText": "Once we receive your reservation, we'll confirm availability and coordinate pickup details.",
+      "paymentText": "You can pay at pickup using cash, Zelle (773) 672-9100, or Venmo (@Eddie_Correa95)."
+    }
   },
   "pricing": {
     "amount": "$4 per carton",
