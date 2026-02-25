@@ -35,8 +35,8 @@
     <section class="hero-section">
         <div class="hero-inner">
             <div class="hero-egg">🥚</div>
-            <h1>Fresh from Our Flock,<br>Straight to Your Table</h1>
-            <p>Happy, healthy backyard hens. Pay what you can — every carton goes right back to the girls.</p>
+            <h1 id="heroHeading">Fresh from Our Flock,<br>Straight to Your Table</h1>
+            <p id="heroSubtext">Happy, healthy backyard hens. Pay what you can — every carton goes right back to the girls.</p>
         </div>
     </section>
 
@@ -51,8 +51,8 @@
 
             <div class="egg-guide">
                 <div class="egg-guide-header">
-                    <h2>Fresh Egg Handling &amp; Cleaning Instructions</h2>
-                    <p>Enjoy your eggs within 3–4 weeks of the lay dates for best quality!</p>
+                    <h2 id="guideTitle">Fresh Egg Handling &amp; Cleaning Instructions</h2>
+                    <p id="guideSubtitle">Enjoy your eggs within 3–4 weeks of the lay dates for best quality!</p>
                 </div>
 
                 <div class="guide-grid">
@@ -126,11 +126,30 @@
 
     <footer>
         <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
-        <p>Made with ❤️ for happy chickens and egg lovers</p>
+        <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
     <script src="js/scripts.js"></script>
     <script>
+        // Load page text from content.json
+        async function loadPageText() {
+            try {
+                const response = await fetch('/data/content.json');
+                const data = await response.json();
+                if (data.siteInfo) {
+                    if (data.siteInfo.heroHeading) document.getElementById('heroHeading').textContent = data.siteInfo.heroHeading;
+                    if (data.siteInfo.heroSubtext) document.getElementById('heroSubtext').textContent = data.siteInfo.heroSubtext;
+                    if (data.siteInfo.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
+                }
+                if (data.pages?.home) {
+                    if (data.pages.home.guideTitle) document.getElementById('guideTitle').textContent = data.pages.home.guideTitle;
+                    if (data.pages.home.guideSubtitle) document.getElementById('guideSubtitle').textContent = data.pages.home.guideSubtitle;
+                }
+            } catch (error) {
+                console.error('Error loading page text:', error);
+            }
+        }
+
         // Load availability status
         async function loadAvailability() {
             try {
@@ -179,6 +198,7 @@
 
         // Load content when page loads
         document.addEventListener('DOMContentLoaded', () => {
+            loadPageText();
             loadAvailability();
         });
     </script>

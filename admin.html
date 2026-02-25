@@ -327,6 +327,7 @@
             <button class="tab" data-tab="chickens">Chickens</button>
             <button class="tab" data-tab="facts">Fun Facts</button>
             <button class="tab" data-tab="siteinfo">Site Info</button>
+            <button class="tab" data-tab="pagetext">Page Text</button>
             <button class="tab" data-tab="reservations">Reservations</button>
         </div>
 
@@ -413,12 +414,86 @@
             <div class="section">
                 <h2>Site Info</h2>
                 <div class="form-group">
-                    <label>Site Title</label>
+                    <label>Site Title <small style="font-weight:400;color:#666;">(browser tab &amp; header)</small></label>
                     <input type="text" id="siteTitle" placeholder="Backyard Eggs">
                 </div>
                 <div class="form-group">
-                    <label>Tagline</label>
+                    <label>Footer Tagline</label>
                     <input type="text" id="siteTagline" placeholder="Fresh from Our Flock to Your Table">
+                </div>
+                <div class="form-group">
+                    <label>Footer Made-With Line</label>
+                    <input type="text" id="siteFooterTagline" placeholder="Made with ❤️ for happy chickens and egg lovers">
+                </div>
+            </div>
+            <div class="section">
+                <h2>Hero (Home Page)</h2>
+                <div class="form-group">
+                    <label>Hero Heading</label>
+                    <input type="text" id="siteHeroHeading" placeholder="Fresh from Our Flock, Straight to Your Table">
+                </div>
+                <div class="form-group">
+                    <label>Hero Subtext</label>
+                    <textarea id="siteHeroSubtext" placeholder="Happy, healthy backyard hens..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Text Tab -->
+        <div id="pagetext-tab" class="tab-content">
+            <div class="section">
+                <h2>Home Page</h2>
+                <div class="form-group">
+                    <label>Egg Guide Title</label>
+                    <input type="text" id="homeGuideTitle" placeholder="Fresh Egg Handling & Cleaning Instructions">
+                </div>
+                <div class="form-group">
+                    <label>Egg Guide Subtitle</label>
+                    <input type="text" id="homeGuideSubtitle" placeholder="Enjoy your eggs within 3–4 weeks...">
+                </div>
+            </div>
+            <div class="section">
+                <h2>Batches Page</h2>
+                <div class="form-group">
+                    <label>Freshness Tip</label>
+                    <input type="text" id="batchesFreshnessTip" placeholder="Enjoy your eggs within 3-4 weeks of the lay dates for best quality!">
+                </div>
+                <div class="form-group">
+                    <label>Donation Text</label>
+                    <input type="text" id="batchesDonationText" placeholder="Suggested Batch Donation: $5 per dozen...">
+                </div>
+            </div>
+            <div class="section">
+                <h2>Meet the Flockers Page</h2>
+                <div class="form-group">
+                    <label>Page Description</label>
+                    <textarea id="meetFlockersDescription" placeholder="Get to know our wonderful backyard chickens!..."></textarea>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Chicken Fax Page</h2>
+                <div class="form-group">
+                    <label>Page Description</label>
+                    <textarea id="chickenFaxDescription" placeholder="Discover fascinating facts about our feathered friends..."></textarea>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Reserve Page</h2>
+                <div class="form-group">
+                    <label>Page Description</label>
+                    <textarea id="reserveDescription" placeholder="Fill out the form below to reserve your fresh eggs..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>After Submitting — Title</label>
+                    <input type="text" id="reserveAfterSubmitTitle" placeholder="After Submitting">
+                </div>
+                <div class="form-group">
+                    <label>After Submitting — Body Text</label>
+                    <textarea id="reserveAfterSubmitText" placeholder="Once we receive your reservation..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Payment Info Text</label>
+                    <textarea id="reservePaymentText" placeholder="You can pay at pickup using cash, Zelle..."></textarea>
                 </div>
             </div>
         </div>
@@ -563,6 +638,7 @@
             renderChickens();
             renderFacts();
             renderSiteInfo();
+            renderPageText();
             renderReservations();
         }
 
@@ -704,6 +780,24 @@
         function renderSiteInfo() {
             document.getElementById('siteTitle').value = contentData.siteInfo?.title || '';
             document.getElementById('siteTagline').value = contentData.siteInfo?.tagline || '';
+            document.getElementById('siteFooterTagline').value = contentData.siteInfo?.footerTagline || '';
+            document.getElementById('siteHeroHeading').value = contentData.siteInfo?.heroHeading || '';
+            document.getElementById('siteHeroSubtext').value = contentData.siteInfo?.heroSubtext || '';
+        }
+
+        // Page Text
+        function renderPageText() {
+            const p = contentData.pages || {};
+            document.getElementById('homeGuideTitle').value = p.home?.guideTitle || '';
+            document.getElementById('homeGuideSubtitle').value = p.home?.guideSubtitle || '';
+            document.getElementById('batchesFreshnessTip').value = p.batches?.freshnessTip || '';
+            document.getElementById('batchesDonationText').value = p.batches?.donationText || '';
+            document.getElementById('meetFlockersDescription').value = p.meetFlockers?.description || '';
+            document.getElementById('chickenFaxDescription').value = p.chickenFax?.description || '';
+            document.getElementById('reserveDescription').value = p.reserve?.description || '';
+            document.getElementById('reserveAfterSubmitTitle').value = p.reserve?.afterSubmitTitle || '';
+            document.getElementById('reserveAfterSubmitText').value = p.reserve?.afterSubmitText || '';
+            document.getElementById('reservePaymentText').value = p.reserve?.paymentText || '';
         }
 
         // Helpers
@@ -953,7 +1047,33 @@
 
             contentData.siteInfo = {
                 title: document.getElementById('siteTitle').value,
-                tagline: document.getElementById('siteTagline').value
+                tagline: document.getElementById('siteTagline').value,
+                footerTagline: document.getElementById('siteFooterTagline').value,
+                heroHeading: document.getElementById('siteHeroHeading').value,
+                heroSubtext: document.getElementById('siteHeroSubtext').value
+            };
+
+            contentData.pages = {
+                home: {
+                    guideTitle: document.getElementById('homeGuideTitle').value,
+                    guideSubtitle: document.getElementById('homeGuideSubtitle').value
+                },
+                batches: {
+                    freshnessTip: document.getElementById('batchesFreshnessTip').value,
+                    donationText: document.getElementById('batchesDonationText').value
+                },
+                meetFlockers: {
+                    description: document.getElementById('meetFlockersDescription').value
+                },
+                chickenFax: {
+                    description: document.getElementById('chickenFaxDescription').value
+                },
+                reserve: {
+                    description: document.getElementById('reserveDescription').value,
+                    afterSubmitTitle: document.getElementById('reserveAfterSubmitTitle').value,
+                    afterSubmitText: document.getElementById('reserveAfterSubmitText').value,
+                    paymentText: document.getElementById('reservePaymentText').value
+                }
             };
 
             // Save via function

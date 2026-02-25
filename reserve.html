@@ -35,7 +35,7 @@
     <main>
         <div class="content-section">
             <h1>Reserve a Batch! 🥚</h1>
-            <p>Fill out the form below to reserve your fresh eggs. We'll get back to you as soon as possible!</p>
+            <p id="pageDescription">Fill out the form below to reserve your fresh eggs. We'll get back to you as soon as possible!</p>
 
             <!-- Reservation Form -->
             <div id="formMessage" style="display: none; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;"></div>
@@ -83,21 +83,39 @@
             </form>
 
             <div class="payment-box" style="margin-top: 2rem;">
-                <h3>After Submitting</h3>
-                <p>Once we receive your reservation, we'll confirm availability and coordinate pickup details.</p>
-                <p><strong>Payment:</strong> You can pay at pickup using cash, Zelle (773) 672-9100, or Venmo (@Eddie_Correa95).</p>
+                <h3 id="afterSubmitTitle">After Submitting</h3>
+                <p id="afterSubmitText">Once we receive your reservation, we'll confirm availability and coordinate pickup details.</p>
+                <p><strong>Payment:</strong> <span id="paymentText">You can pay at pickup using cash, Zelle (773) 672-9100, or Venmo (@Eddie_Correa95).</span></p>
             </div>
         </div>
     </main>
 
     <footer>
         <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
-        <p>Made with ❤️ for happy chickens and egg lovers</p>
+        <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
     <script src="js/scripts.js"></script>
     <script>
         const SUBMITTED_KEY = 'reservation_submitted';
+
+        // Load page text from content.json
+        async function loadPageText() {
+            try {
+                const response = await fetch('/data/content.json');
+                const data = await response.json();
+                if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
+                if (data.pages?.reserve) {
+                    const r = data.pages.reserve;
+                    if (r.description) document.getElementById('pageDescription').textContent = r.description;
+                    if (r.afterSubmitTitle) document.getElementById('afterSubmitTitle').textContent = r.afterSubmitTitle;
+                    if (r.afterSubmitText) document.getElementById('afterSubmitText').textContent = r.afterSubmitText;
+                    if (r.paymentText) document.getElementById('paymentText').textContent = r.paymentText;
+                }
+            } catch (error) {
+                console.error('Error loading page text:', error);
+            }
+        }
 
         async function loadBatchOptions() {
             try {
@@ -136,6 +154,7 @@
 
         // On load: populate batches and check session
         document.addEventListener('DOMContentLoaded', () => {
+            loadPageText();
             loadBatchOptions();
             if (sessionStorage.getItem(SUBMITTED_KEY)) {
                 showAlreadySubmitted();

@@ -35,7 +35,7 @@
     <main>
         <div class="content-section">
             <h1>Meet The Flockers 🐔</h1>
-            <p>Get to know our wonderful backyard chickens! Each hen has her own personality and produces beautiful, fresh eggs.</p>
+            <p id="pageDescription">Get to know our wonderful backyard chickens! Each hen has her own personality and produces beautiful, fresh eggs.</p>
 
             <div class="chicken-grid" id="chickenGrid">
                 <!-- Chickens loaded from content.json -->
@@ -48,7 +48,7 @@
 
     <footer>
         <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
-        <p>Made with ❤️ for happy chickens and egg lovers</p>
+        <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
     <script src="js/scripts.js"></script>
@@ -58,6 +58,10 @@
             try {
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
+
+                // Set dynamic text
+                if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
+                if (data.pages?.meetFlockers?.description) document.getElementById('pageDescription').textContent = data.pages.meetFlockers.description;
 
                 if (data.chickens && data.chickens.length > 0) {
                     const chickenGrid = document.getElementById('chickenGrid');

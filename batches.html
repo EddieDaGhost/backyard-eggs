@@ -35,8 +35,8 @@
     <main>
         <div class="content-section">
             <h1>Batches 📦</h1>
-            <p><strong>Enjoy your eggs within 3-4 weeks of the lay dates for best quality!</strong></p>
-            <p>Suggested Batch Donation: $5 per dozen, or $4 if you return your carton!</p>
+            <p id="freshnessTip"><strong>Enjoy your eggs within 3-4 weeks of the lay dates for best quality!</strong></p>
+            <p id="donationText">Suggested Batch Donation: $5 per dozen, or $4 if you return your carton!</p>
 
             <div class="payment-dropdown">
                 <button class="payment-toggle" aria-expanded="false" onclick="togglePayment(this)">
@@ -63,11 +63,27 @@
 
     <footer>
         <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
-        <p>Made with ❤️ for happy chickens and egg lovers</p>
+        <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
     <script src="js/scripts.js"></script>
     <script>
+        // Load page text from content.json
+        async function loadPageText() {
+            try {
+                const response = await fetch('/data/content.json');
+                const data = await response.json();
+                if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
+                if (data.pages?.batches) {
+                    const b = data.pages.batches;
+                    if (b.freshnessTip) document.getElementById('freshnessTip').innerHTML = '<strong>' + b.freshnessTip + '</strong>';
+                    if (b.donationText) document.getElementById('donationText').textContent = b.donationText;
+                }
+            } catch (error) {
+                console.error('Error loading page text:', error);
+            }
+        }
+
         // Load batches dynamically from JSON
         async function loadBatches() {
             try {
@@ -105,7 +121,10 @@
         }
 
         // Load batches when page loads
-        document.addEventListener('DOMContentLoaded', loadBatches);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPageText();
+            loadBatches();
+        });
     </script>
 </body>
 </html>

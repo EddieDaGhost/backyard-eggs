@@ -35,7 +35,7 @@
     <main>
         <div class="content-section">
             <h1>🐓 Egg & Chicken Fun Facts!</h1>
-            <p>Discover fascinating facts about our feathered friends and the amazing eggs they produce!</p>
+            <p id="pageDescription">Discover fascinating facts about our feathered friends and the amazing eggs they produce!</p>
 
             <ul class="fun-facts" id="funFactsList">
                 <!-- Fun facts loaded from content.json -->
@@ -46,7 +46,7 @@
 
     <footer>
         <p>&copy; 2026 Backyard Eggs - Fresh from Our Flock to Your Table</p>
-        <p>Made with ❤️ for happy chickens and egg lovers</p>
+        <p id="footerTagline">Made with ❤️ for happy chickens and egg lovers</p>
     </footer>
 
     <script src="js/scripts.js"></script>
@@ -56,6 +56,10 @@
             try {
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
+
+                // Set dynamic text
+                if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
+                if (data.pages?.chickenFax?.description) document.getElementById('pageDescription').textContent = data.pages.chickenFax.description;
 
                 if (data.funFacts && data.funFacts.length > 0) {
                     const factsList = document.getElementById('funFactsList');
