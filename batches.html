@@ -36,6 +36,21 @@
         <div class="content-section">
             <h1>Batches 📦</h1>
             <p><strong>Enjoy your eggs within 3-4 weeks of the lay dates for best quality!</strong></p>
+            <p>Suggested Batch Donation: $5 per dozen, or $4 if you return your carton!</p>
+
+            <div class="payment-dropdown">
+                <button class="payment-toggle" aria-expanded="false" onclick="togglePayment(this)">
+                    💳 Payment Methods <span class="payment-chevron">▾</span>
+                </button>
+                <div class="payment-panel">
+                    <ul>
+                        <li>Cash 💵</li>
+                        <li>Zelle: <strong>(773) 672-9100</strong></li>
+                        <li>Venmo: <strong>@Eddie_Correa95</strong></li>
+                    </ul>
+                </div>
+            </div>
+
             <p><em>Batch numbers will be updated regularly!</em></p>
 
             <h2>Current Batches</h2>
@@ -80,6 +95,13 @@
                 console.error('Error loading batches:', error);
                 document.getElementById('batchesContainer').innerHTML = '<p style="text-align: center; color: #dc3545;">Failed to load batches. Please try again later.</p>';
             }
+        }
+
+        function togglePayment(btn) {
+            const panel = btn.nextElementSibling;
+            const isOpen = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!isOpen));
+            panel.classList.toggle('open', !isOpen);
         }
 
         // Load batches when page loads
