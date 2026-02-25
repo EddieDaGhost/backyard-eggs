@@ -43,7 +43,7 @@
                     💳 Payment Methods <span class="payment-chevron">▾</span>
                 </button>
                 <div class="payment-panel">
-                    <ul>
+                    <ul id="paymentMethodsList">
                         <li>Cash 💵</li>
                         <li>Zelle: <strong>(773) 672-9100</strong></li>
                         <li>Venmo: <strong>@Eddie_Correa95</strong></li>
@@ -73,6 +73,7 @@
             try {
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
+                if (data.siteInfo?.title) document.querySelector('.site-title').textContent = data.siteInfo.title;
                 if (data.siteInfo?.tagline) document.getElementById('footerCopyrightTagline').textContent = data.siteInfo.tagline;
                 if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
                 if (data.pages?.batches) {
@@ -85,6 +86,29 @@
                         tipEl.appendChild(strong);
                     }
                     if (b.donationText) document.getElementById('donationText').textContent = b.donationText;
+                }
+                if (data.pricing?.paymentMethods) {
+                    const pm = data.pricing.paymentMethods;
+                    const ul = document.getElementById('paymentMethodsList');
+                    const items = [];
+                    if (pm.cash) items.push('Cash 💵');
+                    if (pm.zelle) items.push('Zelle: __' + pm.zelle + '__');
+                    if (pm.venmo) items.push('Venmo: __' + pm.venmo + '__');
+                    ul.innerHTML = '';
+                    items.forEach(text => {
+                        const li = document.createElement('li');
+                        const parts = text.split('__');
+                        if (parts.length === 3) {
+                            li.appendChild(document.createTextNode(parts[0]));
+                            const strong = document.createElement('strong');
+                            strong.textContent = parts[1];
+                            li.appendChild(strong);
+                            li.appendChild(document.createTextNode(parts[2]));
+                        } else {
+                            li.textContent = text;
+                        }
+                        ul.appendChild(li);
+                    });
                 }
             } catch (error) {
                 console.error('Error loading page text:', error);

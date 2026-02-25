@@ -137,6 +137,7 @@
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
                 if (data.siteInfo) {
+                    if (data.siteInfo.title) document.querySelector('.site-title').textContent = data.siteInfo.title;
                     if (data.siteInfo.heroHeading) document.getElementById('heroHeading').innerHTML = data.siteInfo.heroHeading;
                     if (data.siteInfo.heroSubtext) document.getElementById('heroSubtext').textContent = data.siteInfo.heroSubtext;
                     if (data.siteInfo.tagline) document.getElementById('footerCopyrightTagline').textContent = data.siteInfo.tagline;

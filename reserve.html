@@ -104,6 +104,7 @@
             try {
                 const response = await fetch('/data/content.json');
                 const data = await response.json();
+                if (data.siteInfo?.title) document.querySelector('.site-title').textContent = data.siteInfo.title;
                 if (data.siteInfo?.tagline) document.getElementById('footerCopyrightTagline').textContent = data.siteInfo.tagline;
                 if (data.siteInfo?.footerTagline) document.getElementById('footerTagline').textContent = data.siteInfo.footerTagline;
                 if (data.pages?.reserve) {
