@@ -1,14 +1,6 @@
 {
   "batches": [
     {
-      "id": 1,
-      "number": "01",
-      "startDate": "02/15/2026",
-      "endDate": "02/20/2026",
-      "active": true,
-      "status": "published"
-    },
-    {
       "id": 2,
       "number": "02",
       "startDate": "03/17/2026",
@@ -19,18 +11,26 @@
     {
       "id": 3,
       "number": "03",
-      "startDate": "",
-      "endDate": "",
+      "startDate": "03/17/2026",
+      "endDate": "03/24/2026",
       "active": true,
-      "status": "draft"
+      "status": "published"
     },
     {
       "id": 4,
-      "number": "",
-      "startDate": "",
-      "endDate": "",
+      "number": "04",
+      "startDate": "03/17/2026",
+      "endDate": "03/24/2026",
       "active": true,
-      "status": "draft"
+      "status": "published"
+    },
+    {
+      "id": 5,
+      "number": "05",
+      "startDate": "03/24/2026",
+      "endDate": "03/25/2026",
+      "active": true,
+      "status": "published"
     }
   ],
   "availability": {
