@@ -86,17 +86,14 @@
 
                         const gradient = gradients[chicken.id] || 'linear-gradient(135deg, #666 0%, #888 100%)';
 
-                        // Create image placeholder (can be replaced with actual images later)
-                        const imagePlaceholder = `
-                            <div class="chicken-image-placeholder"
-                                 style="background: ${gradient}; height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
-                                🐔
-                            </div>
-                        `;
+                        // Show actual image if available, otherwise show gradient placeholder
+                        const imageSection = chicken.image
+                            ? `<img src="images/${chicken.image}" alt="${chicken.name}" style="width:100%;height:250px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" onerror="this.outerHTML='<div class=\\'chicken-image-placeholder\\' style=\\'background:${gradient};height:250px;border-radius:6px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;\\'>🐔</div>'">`
+                            : `<div class="chicken-image-placeholder" style="background: ${gradient}; height: 250px; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🐔</div>`;
 
                         card.innerHTML = `
                             <h3>${chicken.name}</h3>
-                            ${imagePlaceholder}
+                            ${imageSection}
                             <p><strong>Breed:</strong> ${chicken.breed}</p>
                             <p><strong>Personality:</strong> ${chicken.personality}</p>
                             <p><strong>Egg Production:</strong> ${chicken.eggProduction}</p>
