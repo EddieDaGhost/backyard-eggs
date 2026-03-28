@@ -840,12 +840,77 @@
                             <input class="c-eggs" type="text" value="${escHtml(c.eggProduction)}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
                         </div>
                         <div>
-                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Image Filename</label>
-                            <input class="c-image" type="text" value="${escHtml(c.image)}" placeholder="e.g. beyonce.jpg" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;">
+                            <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Photo</label>
+                            <input class="c-image" type="hidden" value="${escHtml(c.image)}">
+                            ${c.image ? \`<div class="c-preview" style="margin-bottom:0.5rem;"><img src="images/\${escHtml(c.image)}" alt="\${escHtml(c.name)}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:2px solid #ccc;"></div>\` : '<div class="c-preview" style="margin-bottom:0.5rem;width:80px;height:80px;background:#f0f0f0;border-radius:6px;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🐔</div>'}
+                            <input class="c-photo-upload" type="file" accept="image/*" onchange="previewChickenPhoto(this, ${i})" style="width:100%;font-size:0.85rem;">
+                            <small style="color:#666;">${c.image ? escHtml(c.image) : 'No photo yet'}</small>
                         </div>
                     </div>
                 </li>
             `).join('');
+        }
+
+        function previewChickenPhoto(input, index) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const item = input.closest('.chicken-item');
+                const preview = item.querySelector('.c-preview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:2px solid #6E7B49;">`;
+                // Store the base64 data for upload
+                input.dataset.base64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function uploadChickenPhotos() {
+            const uploads = [];
+            document.querySelectorAll('.chicken-item').forEach((item, i) => {
+                const fileInput = item.querySelector('.c-photo-upload');
+                if (fileInput && fileInput.dataset.base64) {
+                    const name = item.querySelector('.c-name').value || `chicken-${i + 1}`;
+                    const ext = fileInput.files[0]?.name.split('.').pop() || 'jpg';
+                    const filename = name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.' + ext;
+                    uploads.push({
+                        filename,
+                        imageData: fileInput.dataset.base64,
+                        chickenIndex: i
+                    });
+                }
+            });
+
+            if (uploads.length === 0) return true;
+
+            for (const upload of uploads) {
+                try {
+                    const res = await fetch('/api/upload-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            password: adminPassword,
+                            filename: upload.filename,
+                            imageData: upload.imageData
+                        })
+                    });
+                    const result = await res.json();
+                    if (res.ok) {
+                        // Update the hidden image field with the uploaded filename
+                        const item = document.querySelectorAll('.chicken-item')[upload.chickenIndex];
+                        if (item) {
+                            item.querySelector('.c-image').value = result.filename;
+                        }
+                    } else {
+                        showMessage(`❌ Failed to upload photo for chicken #${upload.chickenIndex + 1}: ${result.message || result.error}`, 'error');
+                        return false;
+                    }
+                } catch (error) {
+                    showMessage(`❌ Network error uploading photo: ${error.message}`, 'error');
+                    return false;
+                }
+            }
+            return true;
         }
 
         function syncChickensFromDom() {
@@ -1023,6 +1088,14 @@
             saveBtn.disabled = true;
             saveBtn.textContent = '⏳ Saving...';
 
+            // Upload any new chicken photos first
+            const photosOk = await uploadChickenPhotos();
+            if (!photosOk) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+                return;
+            }
+
             // Sync all inline editors into state before saving
             syncBatchesFromDom();
             syncChickensFromDom();
@@ -1093,6 +1166,8 @@
                 const result = await res.json();
                 if (res.ok) {
                     showMessage('✅ Changes saved! Site will update in 1-2 minutes.', 'success');
+                    // Reload data so SHAs stay fresh for the next save
+                    await loadAllData();
                 } else {
                     showMessage('❌ ' + (result.error || 'Failed to save') + (result.message ? ' — ' + result.message : ''), 'error');
                     if (res.status === 401) setTimeout(logout, 2000);

@@ -37,40 +37,49 @@ exports.handler = async (event, context) => {
     const path = 'data/batches.json';
 
     const getFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-    const getResponse = await fetch(getFileUrl, {
-      headers: {
-        'Authorization': `token ${githubToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    let sha;
-    if (getResponse.ok) {
-      const fileData = await getResponse.json();
-      sha = fileData.sha;
-    }
-
-    // Update file on GitHub
     const content = Buffer.from(JSON.stringify(updatedData, null, 2)).toString('base64');
+    const maxRetries = 3;
 
-    const updateResponse = await fetch(getFileUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${githubToken}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `Update batches via admin dashboard - ${new Date().toISOString()}`,
-        content: content,
-        sha: sha,
-        branch: 'main'
-      })
-    });
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const getResponse = await fetch(getFileUrl, {
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
 
-    if (!updateResponse.ok) {
+      let sha;
+      if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha;
+      }
+
+      const updateResponse = await fetch(getFileUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Update batches via admin dashboard - ${new Date().toISOString()}`,
+          content,
+          sha,
+          branch: 'main'
+        })
+      });
+
+      if (updateResponse.ok) {
+        break;
+      }
+
       const errorData = await updateResponse.json();
+
+      if (updateResponse.status === 409 && attempt < maxRetries - 1) {
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+        continue;
+      }
+
       throw new Error(`GitHub API error: ${errorData.message}`);
     }
 

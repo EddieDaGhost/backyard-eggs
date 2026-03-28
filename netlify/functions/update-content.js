@@ -23,20 +23,10 @@ exports.handler = async (event, context) => {
     const owner = process.env.GITHUB_OWNER || 'EddieDaGhost';
     const repo = process.env.GITHUB_REPO || 'backyard-eggs';
 
-    // Update batches.json
-    if (batches) {
-      await updateFile(githubToken, owner, repo, 'data/batches.json', batches);
-    }
-
-    // Update content.json
-    if (content) {
-      await updateFile(githubToken, owner, repo, 'data/content.json', content);
-    }
-
-    // Update reservations.json
-    if (reservations) {
-      await updateFile(githubToken, owner, repo, 'data/reservations.json', reservations);
-    }
+    // Update files sequentially to avoid SHA conflicts from concurrent commits
+    if (batches)      await updateFile(githubToken, owner, repo, 'data/batches.json', batches);
+    if (content)      await updateFile(githubToken, owner, repo, 'data/content.json', content);
+    if (reservations) await updateFile(githubToken, owner, repo, 'data/reservations.json', reservations);
 
     return {
       statusCode: 200,
@@ -61,43 +51,49 @@ exports.handler = async (event, context) => {
 
 async function updateFile(token, owner, repo, path, data) {
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-  // Get current file SHA
-  const getRes = await fetch(url, {
-    headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json'
-    }
-  });
-
-  let sha;
-  if (getRes.ok) {
-    const fileData = await getRes.json();
-    sha = fileData.sha;
-  }
-
-  // Update file
   const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
+  const maxRetries = 3;
 
-  const putRes = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: `Update ${path} via admin dashboard - ${new Date().toISOString()}`,
-      content: content,
-      sha: sha,
-      branch: 'main'
-    })
-  });
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const getRes = await fetch(url, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
 
-  if (!putRes.ok) {
+    let sha;
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Update ${path} via admin dashboard - ${new Date().toISOString()}`,
+        content,
+        sha,
+        branch: 'main'
+      })
+    });
+
+    if (putRes.ok) {
+      return putRes.json();
+    }
+
     const error = await putRes.json();
+
+    if (putRes.status === 409 && attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      continue;
+    }
+
     throw new Error(`GitHub API error: ${error.message}`);
   }
-
-  return putRes.json();
 }
