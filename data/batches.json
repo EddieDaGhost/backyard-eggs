@@ -11,7 +11,23 @@
     {
       "id": 2,
       "number": "02",
-      "startDate": "02/21/2026",
+      "startDate": "03/17/2026",
+      "endDate": "03/24/2026",
+      "active": true,
+      "status": "published"
+    },
+    {
+      "id": 3,
+      "number": "03",
+      "startDate": "",
+      "endDate": "",
+      "active": true,
+      "status": "draft"
+    },
+    {
+      "id": 4,
+      "number": "",
+      "startDate": "",
       "endDate": "",
       "active": true,
       "status": "draft"
@@ -20,6 +36,6 @@
   "availability": {
     "status": "limited",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-02-24"
+    "lastUpdated": "2026-03-28"
   }
 }
