@@ -31,11 +31,27 @@
       "endDate": "03/25/2026",
       "active": true,
       "status": "published"
+    },
+    {
+      "id": 6,
+      "number": "06",
+      "startDate": "03/25/2026",
+      "endDate": "03/27/2026",
+      "active": true,
+      "status": "published"
+    },
+    {
+      "id": 7,
+      "number": "07",
+      "startDate": "03/27/2026",
+      "endDate": "03/30/2026",
+      "active": true,
+      "status": "published"
     }
   ],
   "availability": {
     "status": "limited",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-03-28"
+    "lastUpdated": "2026-03-31"
   }
 }
