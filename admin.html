@@ -842,7 +842,7 @@
                         <div>
                             <label style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;">Photo</label>
                             <input class="c-image" type="hidden" value="${escHtml(c.image)}">
-                            ${c.image ? \`<div class="c-preview" style="margin-bottom:0.5rem;"><img src="images/\${escHtml(c.image)}" alt="\${escHtml(c.name)}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:2px solid #ccc;"></div>\` : '<div class="c-preview" style="margin-bottom:0.5rem;width:80px;height:80px;background:#f0f0f0;border-radius:6px;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🐔</div>'}
+                            ${c.image ? `<div class="c-preview" style="margin-bottom:0.5rem;"><img src="images/${escHtml(c.image)}" alt="${escHtml(c.name)}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:2px solid #ccc;"></div>` : '<div class="c-preview" style="margin-bottom:0.5rem;width:80px;height:80px;background:#f0f0f0;border-radius:6px;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🐔</div>'}
                             <input class="c-photo-upload" type="file" accept="image/*" onchange="previewChickenPhoto(this, ${i})" style="width:100%;font-size:0.85rem;">
                             <small style="color:#666;">${c.image ? escHtml(c.image) : 'No photo yet'}</small>
                         </div>
