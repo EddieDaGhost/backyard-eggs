@@ -25,7 +25,7 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 5,
@@ -34,7 +34,7 @@
       "endDate": "03/25/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 6,
@@ -43,7 +43,7 @@
       "endDate": "03/27/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 7,
