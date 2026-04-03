@@ -4,7 +4,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { password, batches, content, reservations } = req.body;
+    const { password, batches, content, reservations, privateBatches } = req.body;
 
     if (password !== process.env.ADMIN_PASSWORD) {
       return res.status(401).json({ error: 'Invalid password' });
@@ -23,9 +23,10 @@ module.exports = async function handler(req, res) {
     }
 
     // Update files sequentially to avoid SHA conflicts from concurrent commits
-    if (batches)      await updateFile(githubToken, owner, repo, 'data/batches.json',      batches,      branch);
-    if (content)      await updateFile(githubToken, owner, repo, 'data/content.json',      content,      branch);
-    if (reservations) await updateFile(githubToken, owner, repo, 'data/reservations.json', reservations, branch);
+    if (batches)        await updateFile(githubToken, owner, repo, 'data/batches.json',         batches,        branch);
+    if (content)        await updateFile(githubToken, owner, repo, 'data/content.json',         content,        branch);
+    if (reservations)   await updateFile(githubToken, owner, repo, 'data/reservations.json',   reservations,   branch);
+    if (privateBatches) await updateFile(githubToken, owner, repo, 'data/private-batches.json', privateBatches, branch);
 
     return res.status(200).json({
       success: true,

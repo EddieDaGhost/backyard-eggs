@@ -329,6 +329,7 @@
             <button class="tab" data-tab="siteinfo">Site Info</button>
             <button class="tab" data-tab="pagetext">Page Text</button>
             <button class="tab" data-tab="reservations">Reservations</button>
+            <button class="tab" data-tab="privatebatches">Private Batches</button>
         </div>
 
         <!-- Availability Tab -->
@@ -511,6 +512,18 @@
             </div>
         </div>
 
+        <!-- Private Batches Tab -->
+        <div id="privatebatches-tab" class="tab-content">
+            <div class="section">
+                <div style="background:#eef3f8;border-left:4px solid #4a6274;border-radius:6px;padding:0.75rem 1.25rem;margin-bottom:1.5rem;font-size:0.9rem;color:#2c4a5a;">
+                    🔒 <strong>Private</strong> — these batches are never shown on the public site. Visible only at <code>/homestash</code>.
+                </div>
+                <h2 style="margin-top:0;">Private Batches</h2>
+                <ul id="privateBatchList" class="batch-list"></ul>
+                <button class="add-btn" onclick="addPrivateBatch()">+ Start New Private Batch</button>
+            </div>
+        </div>
+
         <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
             <button class="save-btn" onclick="saveAll()">💾 Save All Changes</button>
         </div>
@@ -522,6 +535,7 @@
         let batchData = { batches: [], availability: {} };
         let contentData = {};
         let reservationData = { reservations: [] };
+        let privateBatchData = { batches: [] };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', init);
@@ -625,6 +639,10 @@
                 const resRes = await fetch('/data/reservations.json?t=' + Date.now());
                 reservationData = await resRes.json();
 
+                // Load private batches
+                const privateRes = await fetch('/data/private-batches.json?t=' + Date.now());
+                privateBatchData = await privateRes.json();
+
                 renderAll();
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -641,6 +659,7 @@
             renderSiteInfo();
             renderPageText();
             renderReservations();
+            renderPrivateBatches();
         }
 
         // Availability
@@ -786,6 +805,139 @@
             if (confirm('Delete this batch?')) {
                 batchData.batches = batchData.batches.filter(b => b.id !== id);
                 renderBatches();
+            }
+        }
+
+        // Private Batches
+        function renderPrivateBatches() {
+            const list = document.getElementById('privateBatchList');
+            const batches = privateBatchData.batches;
+
+            if (batches.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">No private batches yet. Click "+ Start New Private Batch" to begin!</p>';
+                return;
+            }
+
+            const drafts = batches.filter(b => b.status === 'draft');
+            const published = batches.filter(b => b.status !== 'draft');
+
+            const inputStyle = 'width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;';
+            const labelStyle = 'display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;';
+
+            let html = '';
+
+            if (drafts.length > 0) {
+                html += '<h3 style="color:#ffc107;margin-top:0;">📝 In Progress</h3>';
+                html += drafts.map(b => `
+                    <li class="private-batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #ffc107;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <span style="background:#ffc107;color:#212121;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">DRAFT</span>
+                            <button onclick="deletePrivateBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
+                            <div>
+                                <label style="${labelStyle}">Batch #</label>
+                                <input class="pb-number" type="text" value="${escHtml(b.number)}" placeholder="e.g. 03" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">Start Date</label>
+                                <input class="pb-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">End Date</label>
+                                <input class="pb-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="pb-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                                ❄️ Refrigerated
+                            </label>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            <button onclick="saveAll()" style="background:#007bff;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">💾 Save</button>
+                            <button onclick="publishPrivateBatch(${b.id})" style="background:#28a745;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">✓ Publish</button>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            if (published.length > 0) {
+                html += `<h3 style="color:#28a745;margin-top:${drafts.length > 0 ? '2rem' : '0'};">✅ Published</h3>`;
+                html += published.map(b => `
+                    <li class="private-batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #28a745;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <span style="background:#28a745;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">LIVE</span>
+                            <button onclick="deletePrivateBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
+                            <div>
+                                <label style="${labelStyle}">Batch #</label>
+                                <input class="pb-number" type="text" value="${escHtml(b.number)}" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">Start Date</label>
+                                <input class="pb-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                            <div>
+                                <label style="${labelStyle}">End Date</label>
+                                <input class="pb-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="pb-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                                ❄️ Refrigerated
+                            </label>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            list.innerHTML = html;
+        }
+
+        function syncPrivateBatchesFromDom() {
+            document.querySelectorAll('.private-batch-item').forEach(item => {
+                const id = parseInt(item.dataset.id);
+                const batch = privateBatchData.batches.find(b => b.id === id);
+                if (!batch) return;
+                batch.number = item.querySelector('.pb-number').value;
+                batch.startDate = item.querySelector('.pb-start').value;
+                batch.endDate = item.querySelector('.pb-end').value;
+                const refrigCheck = item.querySelector('.pb-refrigerated');
+                if (refrigCheck) batch.refrigerated = refrigCheck.checked;
+            });
+        }
+
+        function addPrivateBatch() {
+            syncPrivateBatchesFromDom();
+            const newId = privateBatchData.batches.length ? Math.max(...privateBatchData.batches.map(b => b.id)) + 1 : 1;
+            const existingNums = privateBatchData.batches.map(b => parseInt(b.number, 10)).filter(n => !isNaN(n));
+            const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 1;
+            const paddedNum = String(nextNum).padStart(2, '0');
+            privateBatchData.batches.push({ id: newId, number: paddedNum, startDate: '', endDate: '', active: true, status: 'draft', refrigerated: false });
+            renderPrivateBatches();
+            document.getElementById('privateBatchList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function publishPrivateBatch(id) {
+            syncPrivateBatchesFromDom();
+            const batch = privateBatchData.batches.find(b => b.id === id);
+            if (!batch) return;
+            if (!batch.endDate) {
+                alert('Please fill in an end date before publishing.');
+                return;
+            }
+            batch.status = 'published';
+            renderPrivateBatches();
+        }
+
+        function deletePrivateBatch(id) {
+            syncPrivateBatchesFromDom();
+            if (confirm('Delete this private batch?')) {
+                privateBatchData.batches = privateBatchData.batches.filter(b => b.id !== id);
+                renderPrivateBatches();
             }
         }
 
@@ -1118,6 +1270,7 @@
 
             // Sync all inline editors into state before saving
             syncBatchesFromDom();
+            syncPrivateBatchesFromDom();
             syncChickensFromDom();
             syncFactsFromDom();
 
@@ -1179,7 +1332,8 @@
                         password: adminPassword,
                         batches: batchData,
                         content: contentData,
-                        reservations: reservationData
+                        reservations: reservationData,
+                        privateBatches: privateBatchData
                     })
                 });
 
