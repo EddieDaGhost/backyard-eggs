@@ -696,7 +696,16 @@
                                 <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
                             </div>
                         </div>
-                        <button onclick="publishBatch(${b.id})" style="background:#28a745;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">✓ Publish</button>
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                                ❄️ Refrigerated
+                            </label>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            <button class="batch-save-btn" onclick="saveAll()" style="background:#007bff;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">💾 Save</button>
+                            <button onclick="publishBatch(${b.id})" style="background:#28a745;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">✓ Publish</button>
+                        </div>
                     </li>
                 `).join('');
             }
@@ -709,7 +718,7 @@
                             <span style="background:#28a745;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">LIVE</span>
                             <button onclick="deleteBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
                         </div>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
                             <div>
                                 <label style="${labelStyle}">Batch #</label>
                                 <input class="b-number" type="text" value="${escHtml(b.number)}" style="${inputStyle}">
@@ -722,6 +731,12 @@
                                 <label style="${labelStyle}">End Date</label>
                                 <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
                             </div>
+                        </div>
+                        <div>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                                ❄️ Refrigerated
+                            </label>
                         </div>
                     </li>
                 `).join('');
@@ -738,13 +753,18 @@
                 batch.number = item.querySelector('.b-number').value;
                 batch.startDate = item.querySelector('.b-start').value;
                 batch.endDate = item.querySelector('.b-end').value;
+                const refrigCheck = item.querySelector('.b-refrigerated');
+                if (refrigCheck) batch.refrigerated = refrigCheck.checked;
             });
         }
 
         function addBatch() {
             syncBatchesFromDom();
             const newId = batchData.batches.length ? Math.max(...batchData.batches.map(b => b.id)) + 1 : 1;
-            batchData.batches.push({ id: newId, number: '', startDate: '', endDate: '', active: true, status: 'draft' });
+            const existingNums = batchData.batches.map(b => parseInt(b.number, 10)).filter(n => !isNaN(n));
+            const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 1;
+            const paddedNum = String(nextNum).padStart(2, '0');
+            batchData.batches.push({ id: newId, number: paddedNum, startDate: '', endDate: '', active: true, status: 'draft', refrigerated: false });
             renderBatches();
             document.getElementById('batchList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
         }

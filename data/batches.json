@@ -6,7 +6,8 @@
       "startDate": "03/17/2026",
       "endDate": "03/24/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 3,
@@ -14,7 +15,8 @@
       "startDate": "03/17/2026",
       "endDate": "03/24/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 4,
@@ -22,7 +24,8 @@
       "startDate": "03/17/2026",
       "endDate": "03/24/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 5,
@@ -30,7 +33,8 @@
       "startDate": "03/24/2026",
       "endDate": "03/25/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 6,
@@ -38,7 +42,8 @@
       "startDate": "03/25/2026",
       "endDate": "03/27/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 7,
@@ -46,7 +51,8 @@
       "startDate": "03/27/2026",
       "endDate": "03/30/2026",
       "active": true,
-      "status": "published"
+      "status": "published",
+      "refrigerated": false
     },
     {
       "id": 8,
@@ -54,7 +60,8 @@
       "startDate": "03/31/2026",
       "endDate": "",
       "active": true,
-      "status": "draft"
+      "status": "draft",
+      "refrigerated": false
     }
   ],
   "availability": {
