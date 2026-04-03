@@ -62,6 +62,15 @@
       "active": true,
       "status": "published",
       "refrigerated": false
+    },
+    {
+      "id": 9,
+      "number": "09",
+      "startDate": "04/03/2026",
+      "endDate": "",
+      "active": true,
+      "status": "draft",
+      "refrigerated": false
     }
   ],
   "availability": {
