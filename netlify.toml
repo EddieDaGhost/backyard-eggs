@@ -9,6 +9,11 @@
   to = "/admin.html"
   status = 200
 
+[[redirects]]
+  from = "/homestash"
+  to = "/homestash.html"
+  status = 200
+
 # Force HTTPS redirect
 [[redirects]]
   from = "http://backyard-eggs.com/*"
