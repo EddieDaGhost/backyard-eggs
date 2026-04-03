@@ -70,7 +70,7 @@
       "endDate": "",
       "active": true,
       "status": "draft",
-      "refrigerated": true
+      "refrigerated": false
     }
   ],
   "availability": {
