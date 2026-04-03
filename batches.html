@@ -127,11 +127,16 @@
                     const publishedBatches = data.batches.filter(batch => batch.active && batch.status !== 'draft' && batch.endDate);
 
                     if (publishedBatches.length > 0) {
-                        container.innerHTML = publishedBatches.map(batch => `
-                            <div class="batch-item">
-                                <strong>#${batch.number}</strong> - Laid between <strong>${batch.startDate} - ${batch.endDate}</strong>
-                            </div>
-                        `).join('');
+                        const hasRefrigerated = publishedBatches.some(b => b.refrigerated);
+                        container.innerHTML =
+                            (hasRefrigerated
+                                ? '<div class="refrigerated-notice">❄️ Refrigerated eggs must stay refrigerated</div>'
+                                : '') +
+                            publishedBatches.map(batch => `
+                                <div class="batch-item">
+                                    <strong>#${batch.number}${batch.refrigerated ? ' ❄️' : ''}</strong> - Laid between <strong>${batch.startDate} - ${batch.endDate}</strong>
+                                </div>
+                            `).join('');
                     } else {
                         container.innerHTML = '<p style="text-align: center; color: #666;">No batches available at the moment. Check back soon!</p>';
                     }

@@ -598,6 +598,18 @@ main {
     font-size: 1.2rem;
 }
 
+.refrigerated-notice {
+    background: rgba(173, 216, 230, 0.4);
+    border: 1px solid rgba(100, 160, 200, 0.5);
+    border-left: 4px solid #5ba8d0;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #1a5276;
+    font-size: 0.95rem;
+}
+
 /* ─── Forms ─── */
 form {
     max-width: 600px;
