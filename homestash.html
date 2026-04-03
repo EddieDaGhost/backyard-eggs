@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Home Stash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Open Sans', sans-serif; background: #f5f5f5; }
+
+        .stash-header {
+            background: #4a6274;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .stash-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stash-header .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .save-btn:hover { background: #218838; }
+        .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .clear-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .clear-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .batch-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .add-btn {
+            background: #4a6274;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .add-btn:hover { background: #3b5060; }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+        }
+
+        .private-note {
+            background: #eef3f8;
+            border-left: 4px solid #4a6274;
+            border-radius: 6px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.875rem;
+            color: #2c4a5a;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<header class="stash-header">
+    <h1>🏠 Home Stash</h1>
+    <div class="header-actions">
+        <button class="save-btn" onclick="saveHomestash()">💾 Save All</button>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    </div>
+</header>
+
+<div class="main">
+
+    <div id="message" class="message"></div>
+
+    <div class="private-note">
+        🔒 Private — these batches are stored on this device only and never appear on the public site.
+    </div>
+
+    <div class="section">
+        <h2 style="margin-top:0;">Private Batches</h2>
+        <ul id="batchList" class="batch-list"></ul>
+        <button class="add-btn" onclick="addHomestashBatch()">+ Start New Batch</button>
+    </div>
+
+</div>
+
+<script>
+    const STORAGE_KEY = 'homestash_batches';
+    let homestashData = { batches: [] };
+
+    function loadHomestash() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) homestashData = JSON.parse(raw);
+        } catch (e) {
+            homestashData = { batches: [] };
+        }
+        renderHomestash();
+    }
+
+    function saveHomestash() {
+        syncHomestashFromDom();
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(homestashData));
+            showMessage('✅ Saved!', 'success');
+        } catch (e) {
+            showMessage('❌ Could not save. Storage may be full.', 'error');
+        }
+    }
+
+    function clearAll() {
+        if (confirm('Clear all private batches? This cannot be undone.')) {
+            homestashData = { batches: [] };
+            localStorage.removeItem(STORAGE_KEY);
+            renderHomestash();
+            showMessage('All batches cleared.', 'success');
+        }
+    }
+
+    function syncHomestashFromDom() {
+        document.querySelectorAll('#batchList .batch-item').forEach(item => {
+            const id = parseInt(item.dataset.id);
+            const batch = homestashData.batches.find(b => b.id === id);
+            if (!batch) return;
+            batch.number = item.querySelector('.b-number').value;
+            batch.startDate = item.querySelector('.b-start').value;
+            batch.endDate = item.querySelector('.b-end').value;
+            const refrigCheck = item.querySelector('.b-refrigerated');
+            if (refrigCheck) batch.refrigerated = refrigCheck.checked;
+        });
+    }
+
+    function renderHomestash() {
+        const list = document.getElementById('batchList');
+        const batches = homestashData.batches;
+
+        if (batches.length === 0) {
+            list.innerHTML = '<p class="empty-msg">No private batches yet. Click "+ Start New Batch" to begin!</p>';
+            return;
+        }
+
+        const drafts = batches.filter(b => b.status === 'draft');
+        const published = batches.filter(b => b.status !== 'draft');
+
+        const inputStyle = 'width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;box-sizing:border-box;';
+        const labelStyle = 'display:block;font-weight:600;font-size:0.85rem;margin-bottom:0.25rem;';
+
+        let html = '';
+
+        if (drafts.length > 0) {
+            html += '<h3 style="color:#ffc107;margin-top:0;">📝 In Progress</h3>';
+            html += drafts.map(b => `
+                <li class="batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #ffc107;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="background:#ffc107;color:#212121;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">DRAFT</span>
+                        <button onclick="deleteHomestashBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
+                        <div>
+                            <label style="${labelStyle}">Batch #</label>
+                            <input class="b-number" type="text" value="${escHtml(b.number)}" placeholder="e.g. 03" style="${inputStyle}">
+                        </div>
+                        <div>
+                            <label style="${labelStyle}">Start Date</label>
+                            <input class="b-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                        </div>
+                        <div>
+                            <label style="${labelStyle}">End Date</label>
+                            <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                            <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                            ❄️ Refrigerated
+                        </label>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="batch-save-btn" onclick="saveHomestash()" style="background:#007bff;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">💾 Save</button>
+                        <button onclick="publishHomestashBatch(${b.id})" style="background:#28a745;color:white;padding:0.5rem 1.25rem;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:600;">✓ Publish</button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        if (published.length > 0) {
+            html += `<h3 style="color:#28a745;margin-top:${drafts.length > 0 ? '2rem' : '0'};">✅ Published</h3>`;
+            html += published.map(b => `
+                <li class="batch-item" data-id="${b.id}" style="background:#fff;border:1px solid #d0d0d0;border-left:4px solid #28a745;border-radius:8px;padding:1.5rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <span style="background:#28a745;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.85rem;font-weight:600;">LIVE</span>
+                        <button onclick="deleteHomestashBatch(${b.id})" style="background:#dc3545;color:white;padding:0.35rem 0.85rem;border:none;border-radius:4px;cursor:pointer;font-size:0.875rem;">Delete</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:0.75rem;">
+                        <div>
+                            <label style="${labelStyle}">Batch #</label>
+                            <input class="b-number" type="text" value="${escHtml(b.number)}" style="${inputStyle}">
+                        </div>
+                        <div>
+                            <label style="${labelStyle}">Start Date</label>
+                            <input class="b-start" type="text" value="${escHtml(b.startDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                        </div>
+                        <div>
+                            <label style="${labelStyle}">End Date</label>
+                            <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                            <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
+                            ❄️ Refrigerated
+                        </label>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        list.innerHTML = html;
+    }
+
+    function addHomestashBatch() {
+        syncHomestashFromDom();
+        const newId = homestashData.batches.length
+            ? Math.max(...homestashData.batches.map(b => b.id)) + 1
+            : 1;
+        const existingNums = homestashData.batches.map(b => parseInt(b.number, 10)).filter(n => !isNaN(n));
+        const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 1;
+        const paddedNum = String(nextNum).padStart(2, '0');
+        homestashData.batches.push({
+            id: newId,
+            number: paddedNum,
+            startDate: '',
+            endDate: '',
+            active: true,
+            status: 'draft',
+            refrigerated: false
+        });
+        renderHomestash();
+        document.getElementById('batchList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function publishHomestashBatch(id) {
+        syncHomestashFromDom();
+        const batch = homestashData.batches.find(b => b.id === id);
+        if (!batch) return;
+        if (!batch.endDate) {
+            alert('Please fill in an end date before publishing.');
+            return;
+        }
+        batch.status = 'published';
+        saveHomestash();
+        renderHomestash();
+    }
+
+    function deleteHomestashBatch(id) {
+        syncHomestashFromDom();
+        if (confirm('Delete this batch?')) {
+            homestashData.batches = homestashData.batches.filter(b => b.id !== id);
+            saveHomestash();
+            renderHomestash();
+        }
+    }
+
+    function escHtml(str) {
+        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function showMessage(text, type) {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.className = `message ${type}`;
+        msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => msg.className = 'message', 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadHomestash);
+</script>
+
+</body>
+</html>
