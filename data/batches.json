@@ -16,7 +16,7 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 4,
@@ -25,7 +25,7 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 5,
@@ -34,7 +34,7 @@
       "endDate": "03/25/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 6,
@@ -43,7 +43,7 @@
       "endDate": "03/27/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": true
     },
     {
       "id": 7,
@@ -60,7 +60,7 @@
       "startDate": "03/31/2026",
       "endDate": "04/02/2026",
       "active": true,
-      "status": "draft",
+      "status": "published",
       "refrigerated": false
     }
   ],
