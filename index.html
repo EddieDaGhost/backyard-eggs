@@ -134,7 +134,7 @@
         // Load page text from content.json
         async function loadPageText() {
             try {
-                const response = await fetch('/data/content.json');
+                const response = await fetch('/data/content.json?t=' + Date.now());
                 const data = await response.json();
                 if (data.siteInfo) {
                     if (data.siteInfo.title) document.querySelector('.site-title').textContent = data.siteInfo.title;
@@ -155,7 +155,7 @@
         // Load availability status
         async function loadAvailability() {
             try {
-                const response = await fetch('/data/batches.json');
+                const response = await fetch('/data/batches.json?t=' + Date.now());
                 const data = await response.json();
 
                 if (data.availability) {

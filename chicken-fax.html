@@ -54,7 +54,7 @@
         // Load fun facts from content.json
         async function loadFunFacts() {
             try {
-                const response = await fetch('/data/content.json');
+                const response = await fetch('/data/content.json?t=' + Date.now());
                 const data = await response.json();
 
                 // Set dynamic text

@@ -102,7 +102,7 @@
         // Load page text from content.json
         async function loadPageText() {
             try {
-                const response = await fetch('/data/content.json');
+                const response = await fetch('/data/content.json?t=' + Date.now());
                 const data = await response.json();
                 if (data.siteInfo?.title) document.querySelector('.site-title').textContent = data.siteInfo.title;
                 if (data.siteInfo?.tagline) document.getElementById('footerCopyrightTagline').textContent = data.siteInfo.tagline;
@@ -121,7 +121,7 @@
 
         async function loadBatchOptions() {
             try {
-                const response = await fetch('/data/batches.json');
+                const response = await fetch('/data/batches.json?t=' + Date.now());
                 const data = await response.json();
                 if (!data.batches) return;
 
