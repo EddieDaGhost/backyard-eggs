@@ -78,6 +78,15 @@
       "startDate": "04/08/2026",
       "endDate": "04/09/2026",
       "active": true,
+      "status": "published",
+      "refrigerated": false
+    },
+    {
+      "id": 11,
+      "number": "11",
+      "startDate": "04/09/2026",
+      "endDate": "",
+      "active": true,
       "status": "draft",
       "refrigerated": false
     }
