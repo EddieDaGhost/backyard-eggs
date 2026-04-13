@@ -323,13 +323,13 @@
         <div class="tabs">
             <button class="tab active" data-tab="availability">Availability</button>
             <button class="tab" data-tab="batches">Batches</button>
+            <button class="tab" data-tab="privatebatches">Private Batches</button>
             <button class="tab" data-tab="pricing">Pricing</button>
             <button class="tab" data-tab="chickens">Chickens</button>
             <button class="tab" data-tab="facts">Fun Facts</button>
             <button class="tab" data-tab="siteinfo">Site Info</button>
             <button class="tab" data-tab="pagetext">Page Text</button>
             <button class="tab" data-tab="reservations">Reservations</button>
-            <button class="tab" data-tab="privatebatches">Private Batches</button>
         </div>
 
         <!-- Availability Tab -->
@@ -369,6 +369,21 @@
                 </div>
                 <ul id="batchList" class="batch-list"></ul>
                 <button class="add-btn" onclick="addBatch()">+ Start New Batch</button>
+            </div>
+        </div>
+
+        <!-- Private Batches Tab -->
+        <div id="privatebatches-tab" class="tab-content">
+            <div class="section">
+                <div style="background:#eef3f8;border-left:4px solid #4a6274;border-radius:6px;padding:0.75rem 1.25rem;margin-bottom:1.5rem;font-size:0.9rem;color:#2c4a5a;">
+                    🔒 <strong>Private</strong> — these batches are never shown on the public site. Visible only at <code>/homestash</code>.
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h2 style="margin:0;">Private Batches</h2>
+                    <button class="add-btn" onclick="addPrivateBatch()">+ Start New Private Batch</button>
+                </div>
+                <ul id="privateBatchList" class="batch-list"></ul>
+                <button class="add-btn" onclick="addPrivateBatch()">+ Start New Private Batch</button>
             </div>
         </div>
 
@@ -512,18 +527,6 @@
                 </div>
                 <div id="reservationStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></div>
                 <ul id="reservationList" style="list-style: none; padding: 0;"></ul>
-            </div>
-        </div>
-
-        <!-- Private Batches Tab -->
-        <div id="privatebatches-tab" class="tab-content">
-            <div class="section">
-                <div style="background:#eef3f8;border-left:4px solid #4a6274;border-radius:6px;padding:0.75rem 1.25rem;margin-bottom:1.5rem;font-size:0.9rem;color:#2c4a5a;">
-                    🔒 <strong>Private</strong> — these batches are never shown on the public site. Visible only at <code>/homestash</code>.
-                </div>
-                <h2 style="margin-top:0;">Private Batches</h2>
-                <ul id="privateBatchList" class="batch-list"></ul>
-                <button class="add-btn" onclick="addPrivateBatch()">+ Start New Private Batch</button>
             </div>
         </div>
 
