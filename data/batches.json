@@ -18,7 +18,7 @@
       "active": true,
       "status": "published",
       "refrigerated": true,
-      "returned": false
+      "returned": true
     },
     {
       "id": 4,
@@ -114,6 +114,6 @@
   "availability": {
     "status": "limited",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-04-12"
+    "lastUpdated": "2026-04-13"
   }
 }
