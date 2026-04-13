@@ -134,7 +134,7 @@
                                 : '') +
                             publishedBatches.map(batch => `
                                 <div class="batch-item">
-                                    <strong>#${batch.number}${batch.refrigerated ? ' ❄️' : ''}</strong> - Laid between <strong>${batch.startDate} - ${batch.endDate}</strong>
+                                    <strong>#${batch.number}${batch.refrigerated ? ' ❄️' : ''}</strong> - Laid between ${batch.returned ? `<strong><s>${batch.startDate} - ${batch.endDate}</s></strong>` : `<strong>${batch.startDate} - ${batch.endDate}</strong>`}
                                 </div>
                             `).join('');
                     } else {

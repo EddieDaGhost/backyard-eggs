@@ -7,7 +7,8 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 3,
@@ -16,7 +17,8 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": true
+      "refrigerated": true,
+      "returned": false
     },
     {
       "id": 4,
@@ -25,7 +27,8 @@
       "endDate": "03/24/2026",
       "active": true,
       "status": "published",
-      "refrigerated": true
+      "refrigerated": true,
+      "returned": false
     },
     {
       "id": 5,
@@ -34,7 +37,8 @@
       "endDate": "03/25/2026",
       "active": true,
       "status": "published",
-      "refrigerated": true
+      "refrigerated": true,
+      "returned": false
     },
     {
       "id": 6,
@@ -43,7 +47,8 @@
       "endDate": "03/27/2026",
       "active": true,
       "status": "published",
-      "refrigerated": true
+      "refrigerated": true,
+      "returned": false
     },
     {
       "id": 7,
@@ -52,7 +57,8 @@
       "endDate": "03/30/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 8,
@@ -61,7 +67,8 @@
       "endDate": "04/02/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 9,
@@ -70,7 +77,8 @@
       "endDate": "04/07/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 10,
@@ -79,7 +87,8 @@
       "endDate": "04/09/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 11,
@@ -88,7 +97,8 @@
       "endDate": "04/11/2026",
       "active": true,
       "status": "published",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 12,
@@ -97,7 +107,8 @@
       "endDate": "",
       "active": true,
       "status": "draft",
-      "refrigerated": false
+      "refrigerated": false,
+      "returned": false
     }
   ],
   "availability": {
