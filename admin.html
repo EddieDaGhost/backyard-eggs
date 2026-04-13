@@ -363,7 +363,10 @@
         <!-- Batches Tab -->
         <div id="batches-tab" class="tab-content">
             <div class="section">
-                <h2>Manage Batches</h2>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h2 style="margin:0;">Manage Batches</h2>
+                    <button class="add-btn" onclick="addBatch()">+ Start New Batch</button>
+                </div>
                 <ul id="batchList" class="batch-list"></ul>
                 <button class="add-btn" onclick="addBatch()">+ Start New Batch</button>
             </div>
@@ -715,10 +718,16 @@
                                 <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
                             </div>
                         </div>
-                        <div style="margin-bottom:0.75rem;">
+                        <div style="margin-bottom:0.5rem;">
                             <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
                                 <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
                                 ❄️ Refrigerated
+                            </label>
+                        </div>
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="b-returned" ${b.returned ? 'checked' : ''}>
+                                ↩️ Returned (shows strikethrough on public site)
                             </label>
                         </div>
                         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
@@ -751,10 +760,16 @@
                                 <input class="b-end" type="text" value="${escHtml(b.endDate)}" placeholder="MM/DD/YYYY" style="${inputStyle}">
                             </div>
                         </div>
-                        <div>
+                        <div style="margin-bottom:0.5rem;">
                             <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
                                 <input type="checkbox" class="b-refrigerated" ${b.refrigerated ? 'checked' : ''}>
                                 ❄️ Refrigerated
+                            </label>
+                        </div>
+                        <div>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem;cursor:pointer;">
+                                <input type="checkbox" class="b-returned" ${b.returned ? 'checked' : ''}>
+                                ↩️ Returned (shows strikethrough on public site)
                             </label>
                         </div>
                     </li>
@@ -774,6 +789,8 @@
                 batch.endDate = item.querySelector('.b-end').value;
                 const refrigCheck = item.querySelector('.b-refrigerated');
                 if (refrigCheck) batch.refrigerated = refrigCheck.checked;
+                const returnedCheck = item.querySelector('.b-returned');
+                if (returnedCheck) batch.returned = returnedCheck.checked;
             });
         }
 
@@ -783,7 +800,7 @@
             const existingNums = batchData.batches.map(b => parseInt(b.number, 10)).filter(n => !isNaN(n));
             const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 1;
             const paddedNum = String(nextNum).padStart(2, '0');
-            batchData.batches.push({ id: newId, number: paddedNum, startDate: '', endDate: '', active: true, status: 'draft', refrigerated: false });
+            batchData.batches.push({ id: newId, number: paddedNum, startDate: '', endDate: '', active: true, status: 'draft', refrigerated: false, returned: false });
             renderBatches();
             document.getElementById('batchList').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
         }
