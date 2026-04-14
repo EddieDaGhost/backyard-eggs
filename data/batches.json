@@ -104,6 +104,16 @@
       "id": 12,
       "number": "12",
       "startDate": "04/11/2026",
+      "endDate": "04/13/2026",
+      "active": true,
+      "status": "published",
+      "refrigerated": false,
+      "returned": false
+    },
+    {
+      "id": 13,
+      "number": "13",
+      "startDate": "04/13/2026",
       "endDate": "",
       "active": true,
       "status": "draft",
@@ -114,6 +124,6 @@
   "availability": {
     "status": "available",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-04-13"
+    "lastUpdated": "2026-04-14"
   }
 }
