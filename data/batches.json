@@ -8,7 +8,7 @@
       "active": true,
       "status": "published",
       "refrigerated": false,
-      "returned": false
+      "returned": true
     },
     {
       "id": 3,
@@ -38,7 +38,7 @@
       "active": true,
       "status": "published",
       "refrigerated": true,
-      "returned": false
+      "returned": true
     },
     {
       "id": 6,
@@ -48,7 +48,7 @@
       "active": true,
       "status": "published",
       "refrigerated": true,
-      "returned": false
+      "returned": true
     },
     {
       "id": 7,
@@ -58,7 +58,7 @@
       "active": true,
       "status": "published",
       "refrigerated": false,
-      "returned": false
+      "returned": true
     },
     {
       "id": 8,
@@ -164,6 +164,6 @@
   "availability": {
     "status": "available",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-04-25"
+    "lastUpdated": "2026-04-28"
   }
 }
