@@ -43,12 +43,12 @@
     {
       "id": 6,
       "number": "06",
-      "startDate": "03/25/2026",
-      "endDate": "03/27/2026",
+      "startDate": "04/28/2026",
+      "endDate": "04/30/2026",
       "active": true,
       "status": "published",
-      "refrigerated": true,
-      "returned": true
+      "refrigerated": false,
+      "returned": false
     },
     {
       "id": 7,
@@ -169,11 +169,31 @@
       "status": "published",
       "refrigerated": false,
       "returned": false
+    },
+    {
+      "id": 19,
+      "number": "19",
+      "startDate": "04/26/2026",
+      "endDate": "04/28/2026",
+      "active": true,
+      "status": "published",
+      "refrigerated": false,
+      "returned": false
+    },
+    {
+      "id": 20,
+      "number": "20",
+      "startDate": "",
+      "endDate": "",
+      "active": true,
+      "status": "draft",
+      "refrigerated": false,
+      "returned": false
     }
   ],
   "availability": {
     "status": "available",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-04-28"
+    "lastUpdated": "2026-05-02"
   }
 }
