@@ -3,11 +3,11 @@
     {
       "id": 1,
       "number": "01",
-      "startDate": "04/01/2026",
-      "endDate": "04/02/2026",
+      "startDate": "05/05/2026",
+      "endDate": "",
       "active": true,
       "status": "published",
-      "refrigerated": true
+      "refrigerated": false
     },
     {
       "id": 2,
