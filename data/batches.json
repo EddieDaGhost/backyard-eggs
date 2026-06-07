@@ -53,12 +53,12 @@
     {
       "id": 7,
       "number": "07",
-      "startDate": "03/27/2026",
-      "endDate": "03/30/2026",
+      "startDate": "05/17/2026",
+      "endDate": "05/23/2026",
       "active": true,
       "status": "published",
       "refrigerated": false,
-      "returned": true
+      "returned": false
     },
     {
       "id": 8,
@@ -194,6 +194,6 @@
   "availability": {
     "status": "available",
     "message": "Fresh eggs available now!",
-    "lastUpdated": "2026-05-06"
+    "lastUpdated": "2026-06-07"
   }
 }
